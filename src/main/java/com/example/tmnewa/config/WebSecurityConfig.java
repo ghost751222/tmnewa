@@ -8,6 +8,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -26,6 +28,7 @@ public class WebSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -37,7 +40,7 @@ public class WebSecurityConfig {
                         .loginPage("/login")
 
                         .defaultSuccessUrl("/", true)
-                        .failureUrl("/login?loginError=true")
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -46,7 +49,7 @@ public class WebSecurityConfig {
                         .deleteCookies("JSESSIONID"))
                 .authenticationProvider(loginAuthProvider)
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?loginRequired=true")));
+                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?error=true")));
         return http.build();
     }
 }

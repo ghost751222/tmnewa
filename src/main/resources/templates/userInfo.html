@@ -1,0 +1,210 @@
+<html layout:decorate="~{fragments/layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+<body>
+
+
+<div id="app" layout:fragment="content">
+
+
+    <modal v-if="showModal">
+
+        <form slot="body" class="form" @submit.prevent="save">
+            <div class="form-group">
+                <label for="account">帳號</label>
+                <input type="text" class="form-control" id="account" required
+                       v-model="user.account" placeholder="Enter Account"/>
+
+            </div>
+
+
+            <div class="form-group">
+                <label for="name">用戶名稱</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter Name" required
+                       v-model="user.name"/>
+            </div>
+
+<!--            <div class="form-group">-->
+<!--                <select class="form-control" multiple v-model="user.userGroups">-->
+<!--                    <option v-for="group in groups" :value="group.id">{{group.name}}</option>-->
+<!--                </select>-->
+<!--            </div>-->
+
+            <div class="text-right">
+                <button class="btn btn-primary">ok</button>
+                <input type="button" class="btn btn-primary" @click="close" value="close"/>
+            </div>
+
+
+        </form>
+
+    </modal>
+
+
+    <form class="" @submit.prevent>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary mb-2" @click="query">{{queryValue}}</button>
+              <button type="submit" class="btn btn-primary mb-2" @click="add">{{addValue}}</button>
+        </div>
+        <div class="form-group col-md-3">
+            <label for="queryAccount">帳號</label>
+            <input type="text" class="form-control" id="queryAccount" v-model="queryAccount"/>
+        </div>
+    </form>
+
+
+    <div class="pagination ui basic segment grid">
+        <vuetable-pagination-info ref="paginationInfo"></vuetable-pagination-info>
+
+        <vuetable-pagination ref="pagination"
+                             @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
+    </div>
+
+    <vuetable ref="vuetable" :api-url="url" :load-on-start="false" :fields="fields" :per-page="perPage"
+              :append-params="appendParams" :transform="transformData" @vuetable:load-success="loadSuccess"
+              :query-params="{  page: 'pageIndex',perPage:'pageSize',sort:'sort'}" :reactive-api-url="false"
+              track-by="id" data-path="data" pagination-path="pagination" :sort-order="sortOrder"
+              @vuetable:pagination-data="onPaginationData">
+
+        <div slot="actions" slot-scope="props">
+
+            <button @click="editRow(props.rowData)" title="edit" class="btn btn-primary">
+                <i class="fas fa-edit"></i>
+            </button>
+
+            <button class="btn btn-info btn-sm"  @click="rePassword($event,props.rowData)">
+                <i class="fa-solid fa-lock"></i>
+            </button>
+
+
+        </div>
+    </vuetable>
+
+
+</div>
+<th:block layout:fragment="script">
+
+    <script th:inline="javascript">
+       const vue = new Vue({
+          el:'#app',
+          data:{
+            user:{
+                 id:null,
+                 account:null,
+                 password:null,
+                 name:null,
+            },
+            queryAccount:null,
+            action:null,
+            showModal: false,
+            fields:[],
+
+            url:[[@{/userInfo/data}]],
+            sortOrder : [{field:"Id",direction:"asc"}],
+            addValue:"新增用戶",
+            queryValue:"搜尋用戶"
+          },
+          methods:{
+              open(){
+                this.showModal=true;
+              },close(){
+                 this.showModal=false;
+              },
+              save(){
+                   this.sendData()
+              },
+              add(){
+                  this.action = "add"
+                  this.user.id="";
+                  this.user.account = "";
+                  this.user.password = "";
+                  this.user.name = "";
+                  this.open();
+              },
+              query(){
+                    var queryAccount = this.queryAccount==null ? "":this.queryAccount;
+                    this.appendParams= {}
+                    if(this.queryAccount) this.appendParams["account"] = this.queryAccount;
+                    this.$nextTick(function(){
+                        this.$refs.vuetable.refresh()
+                    });
+              },
+               editRow(rowData){
+                  //alert("You clicked edit on"+ JSON.stringify(rowData))
+                  this.action = "upd"
+                  this.user.id = rowData.id;
+                  this.user.account = rowData.account;
+                  this.user.password = rowData.password;
+                  this.user.name = rowData.name;
+                  this.open()
+
+                },
+                deleteRow(rowData){
+                  this.action = "del"
+                  this.user.id = rowData.id;
+                  this.user.account = rowData.account;
+                  this.user.password = rowData.password;
+                  this.user.name = rowData.name;
+                  this.sendData()
+                },
+                rePassword(e,rowData){
+                      this.action = "upd"
+                      this.user.id = rowData.id;
+                      this.user.account = rowData.account;
+                      this.user.password = "";
+                      this.user.name = rowData.name;
+                      this.sendData()
+                },
+                sendData(){
+                    this.user.account = this.user.account.toLowerCase();
+
+                    const config = {
+                        url:[[@{/userInfo}]],
+                        data:JSON.stringify(vue.user),
+                        headers:{
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }
+
+                    switch(this.action){
+                        case "add":
+                            config.method = 'post'
+                            break;
+                         case "del":
+                            config.method = 'delete'
+                            break;
+                         case "upd":
+                            config.method = 'put'
+                            break;
+                    }
+                    this.$http(config).then( (res)=>{
+
+                        if(res.data.statusCode ==200){
+                            vue.showModal = false;
+                            alert(res.data.message)
+                            //location.reload();
+                        }else{
+                            alert(res.data.message)
+                        }
+                   }).catch(err => {
+
+                        if(err =="Error: Network Error"){
+                             location.reload();
+                        }else{
+                            alert('System Error');
+                            console.log(err)
+                        }
+                   })
+                }
+            },mounted:function(){
+                    this.fields=[{name:'id',title:'ID'},{name:'account',title:'帳號'},{name:'name',title:'顯示名稱'},{ "name": "actions", "title": "Actions" },]
+                    this.query();
+            }
+
+       })
+
+
+
+    </script>
+</th:block>
+
+</body>
+</html>

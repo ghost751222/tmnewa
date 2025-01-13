@@ -8,7 +8,7 @@
         <div class="sidebar-brand-text mx-3"></div>
     </a>
 
-    <hr class="sidebar-divider">
+    <hr class="sidebar-divider"  th:if="${session.isAdmin}">
     <li class="nav-item" th:if="${session.isAdmin}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#sysManager" aria-expanded="true"
            aria-controls="collapseTwo">
@@ -18,7 +18,7 @@
         <div id="sysManager" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header"></h6>
-                <a class="collapse-item" th:href="@{/userInfo}" target="iframeMain">用戶管理</a>
+                <a class="collapse-item" th:href="@{/userInfo}" id="userInfo">用戶管理</a>
             </div>
         </div>
     </li>

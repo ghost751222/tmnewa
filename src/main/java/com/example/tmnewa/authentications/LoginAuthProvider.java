@@ -1,42 +1,65 @@
 package com.example.tmnewa.authentications;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.example.tmnewa.Respository.UserInfoRepository;
+import com.example.tmnewa.entity.UserInfo;
+import com.example.tmnewa.utils.JacksonUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 
 @Component
+@Slf4j
 public class LoginAuthProvider implements AuthenticationProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginAuthProvider.class);
+    PasswordEncoder passwordEncoder;
 
+    UserInfoRepository userInfoRepository;
 
-    private PasswordEncoder passwordEncoder;
-
-
+    HttpSession httpSession;
     @Autowired
-    public LoginAuthProvider() {
-        this.passwordEncoder =  new BCryptPasswordEncoder();
+    public LoginAuthProvider(PasswordEncoder encoder, UserInfoRepository userInfoRepository,HttpSession httpSession) {
+        this.passwordEncoder = encoder;
+        this.userInfoRepository = userInfoRepository;
+        this.httpSession = httpSession;
     }
 
 
+    @SneakyThrows
     @Override
-    public Authentication authenticate(Authentication auth) {
+    public Authentication authenticate(Authentication auth) throws RuntimeException {
 
         String account = auth.getName().toLowerCase();
-        String password = auth.getCredentials().toString();
+        String rawPassword = auth.getCredentials().toString();
 
-        return new UsernamePasswordAuthenticationToken
-                (account, password, Collections.emptyList());
+        UserInfo userInfo = userInfoRepository.findByAccount(account);
+        if (userInfo == null) {
+            log.error("{} is not exist ", account);
 
+            throw new RuntimeException("User not exist");
+
+        } else {
+            String password = userInfo.getPassword();
+            if (passwordEncoder.matches(rawPassword, password)) {
+                httpSession.setAttribute("isAdmin",true);
+                httpSession.setAttribute("name",userInfo.getName());
+                httpSession.setAttribute("userInfo", JacksonUtils.writeValueAsString(userInfo));
+                return new UsernamePasswordAuthenticationToken
+                        (account, password, Collections.emptyList());
+            } else {
+                throw new RuntimeException("User not exist");
+            }
+        }
     }
 
 

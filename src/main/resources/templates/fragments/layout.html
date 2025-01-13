@@ -104,10 +104,7 @@
             'resetPasswordInput':null
           },methods:{
               confirmClick(){
-                    var csrfName = [[${_csrf.headerName}]]
-                    var csrfToken = [[${_csrf.token}]]
 
-                    axios.defaults.headers.common[csrfName] = csrfToken;
 
                    if(this.resetPasswordInput == null){
                         alert('Please input password')
@@ -115,12 +112,9 @@
                    }
                    var url = [[@{/userInfo}]] + '/rePassword';
                    var data = {password:this.resetPasswordInput};
-                   axios.post(url,data).then(res=>{
-                       if(res.redirected) location.reload()
-                       alert('Modify Success')
+                   axios.put(url,data).then(res=>{
+                      alert('Modify Success')
                       $('#resetPasswordModal').modal('hide')
-                      reset.resetPasswordInput = null
-
                    }).catch(err =>{alert('System Error'); console.log(err); } )
               }
           }
