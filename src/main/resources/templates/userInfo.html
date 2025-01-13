@@ -67,14 +67,16 @@
         <div slot="actions" slot-scope="props">
 
             <button @click="editRow(props.rowData)" title="edit" class="btn btn-primary">
-                <i class="fas fa-edit"></i>
+                <i class="fas fa-edit">編輯用戶資訊</i>
             </button>
 
             <button class="btn btn-info btn-sm"  @click="rePassword($event,props.rowData)">
-                <i class="fa-solid fa-lock"></i>
+                <i class="fa-solid fa-lock">更新用戶密碼</i>
             </button>
 
-
+            <button @click="deleteRow(props.rowData)" title="edit" class="btn btn-primary">
+                <i class="fas fa-edit">刪除用戶</i>
+            </button>
         </div>
     </vuetable>
 
@@ -180,6 +182,7 @@
                         if(res.data.statusCode ==200){
                             vue.showModal = false;
                             alert(res.data.message)
+                            this.query()
                             //location.reload();
                         }else{
                             alert(res.data.message)

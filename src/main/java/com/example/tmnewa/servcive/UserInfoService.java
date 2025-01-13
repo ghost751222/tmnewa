@@ -55,7 +55,8 @@ public class UserInfoService {
         return this.save(userInfo);
     }
 
-    public void deleteUserInfo(UserInfo userInfo) {
+    public UserInfo deleteUserInfo(UserInfo userInfo) {
         userInfoRepository.delete(userInfo);
+        return userInfo;
     }
 }

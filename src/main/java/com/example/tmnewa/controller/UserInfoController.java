@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import vo.RequestQueryVo;
 import vo.ResponseVo;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Controller
@@ -85,7 +86,8 @@ public class UserInfoController {
 
     @RequestMapping(value = {"/rePassword"}, method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseVo<UserInfo> rePassword(@RequestBody String  password) throws JsonProcessingException {
+    public ResponseVo<UserInfo> rePassword(@RequestBody String  password) throws IOException {
+        password = JacksonUtils.toJsonNode(password).get("password").asText();
         UserInfo userInfo=  JacksonUtils.readValue((String)httpSession.getAttribute("userInfo"),UserInfo.class);
         ResponseVo<UserInfo> responseVo = new ResponseVo<>();
         responseVo.setMessage("更新成功");
@@ -101,7 +103,7 @@ public class UserInfoController {
         userInfoService.deleteUserInfo(userInfo);
         ResponseVo<UserInfo> responseVo = new ResponseVo<>();
         responseVo.setMessage("刪除成功");
-        responseVo.setData(userInfoService.updateUserInfo(userInfo));
+        responseVo.setData(userInfoService.deleteUserInfo(userInfo));
         return responseVo;
     }
 }
