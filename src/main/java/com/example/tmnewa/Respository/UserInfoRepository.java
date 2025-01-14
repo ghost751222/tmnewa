@@ -22,7 +22,7 @@ public interface UserInfoRepository extends JpaRepository<UserInfo, Long> {
 //
 //            nativeQuery = true)
 
-    @Query(value = "select * from user_info where (account = :#{#requestQueryVo.account} or :#{#requestQueryVo.account} is null)", nativeQuery = true)
+    @Query(value = "select * from user_info where account != 'admin' and (account = :#{#requestQueryVo.account} or :#{#requestQueryVo.account} is null)", nativeQuery = true)
     Page<UserInfo> findByQueryParameter(@Param("requestQueryVo") RequestQueryVo requestQueryVo, Pageable pageable);
 
     UserInfo findByName(String name);
