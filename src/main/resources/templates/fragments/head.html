@@ -1,5 +1,5 @@
 <head th:fragment="head" xmlns:th="http://www.w3.org/1999/xhtml">
-
+    <title>Page</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -47,12 +47,7 @@
         Vue.component("vuetable-pagination-info", Vuetable.VueTablePaginationInfo);
         Vue.prototype.$http = axios;
         Vue.component('modal', {
-            template: '#modal-template',
-            methods:{
-               close(){
-                 alert(1)
-               }
-            }
+            template: '#modal-template'
         })
         Vue.mixin({
           props: {
@@ -120,7 +115,7 @@
 
                         <div class="modal-header">
                             <div  class="d-flex flex-row-reverse w-100" style="cursor:pointer">
-                                <i class="fa-solid fa-xmark" v-on:click="$emit('close')"></i>
+                                <i class="fa-solid fa-xmark" @click="$emit('close')"></i>
                             </div>
 
                             <slot name="header">
