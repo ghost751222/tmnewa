@@ -47,16 +47,27 @@
         Vue.component("vuetable-pagination-info", Vuetable.VueTablePaginationInfo);
         Vue.prototype.$http = axios;
         Vue.component('modal', {
-            template: '#modal-template'
+            template: '#modal-template',
+            methods:{
+               close(){
+                 alert(1)
+               }
+            }
         })
         Vue.mixin({
+          props: {
+            appendParams: {
+              type: Object,
+              default: () => ({})
+            },
+            perPage:{
+              type:Number,
+              default:10
+            }
+          },
           data:function(){
              return {
                  contextPath:contextPath,
-                 perPage :10,
-                 appendParams:{},
-<!--                 dataPath :"data",-->
-<!--                 paginationPath :"pagination",-->
              }
           },
           methods: {
@@ -109,7 +120,7 @@
 
                         <div class="modal-header">
                             <div  class="d-flex flex-row-reverse w-100" style="cursor:pointer">
-                                <i class="fa-solid fa-xmark" @click="$emit('close')"></i>
+                                <i class="fa-solid fa-xmark" v-on:click="$emit('close')"></i>
                             </div>
 
                             <slot name="header">
