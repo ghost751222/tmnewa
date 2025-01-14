@@ -1,4 +1,7 @@
 <html layout:decorate="~{fragments/layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+
+<title layout:fragment="title">User</title>
+
 <body>
 
 
@@ -66,16 +69,16 @@
 
         <div slot="actions" slot-scope="props">
 
-            <button @click="editRow(props.rowData)" title="edit" class="btn btn-primary">
+            <button class="btn btn-primary btn-sm" @click="editRow(props.rowData)" title="edit">
                 <i class="fas fa-edit">編輯用戶資訊</i>
             </button>
 
-            <button class="btn btn-info btn-sm"  @click="rePassword($event,props.rowData)">
+            <button class="btn btn-warning btn-sm"  title="RePassword" @click="rePassword($event,props.rowData)">
                 <i class="fa-solid fa-lock">更新用戶密碼</i>
             </button>
 
-            <button @click="deleteRow(props.rowData)" title="edit" class="btn btn-primary">
-                <i class="fas fa-edit">刪除用戶</i>
+            <button class="btn btn-danger btn-sm" @click="deleteRow(props.rowData)" title="delete">
+                <i class="fa fa-trash">刪除用戶</i>
             </button>
         </div>
     </vuetable>
