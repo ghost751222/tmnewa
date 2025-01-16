@@ -32,11 +32,7 @@
         // 異常處理
         axios.interceptors.response.use(function (res) {
             if(res.request.responseURL.includes('login')){
-                var newUrl =baseUrl +  "login"
-                if(window.parent){
-                  window.parent.location.href =newUrl
-                }
-                location.href = newUrl
+               location.reload()
             }
             return res;
         });
