@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(name = "user_info")
 @Entity
@@ -26,5 +28,13 @@ public class UserInfo {
 
     private LocalDateTime updatedAt;
 
+
+    @ManyToMany(fetch = FetchType.LAZY)  // EAGER 加載
+    @JoinTable(
+            name = "user_roles",  // 這裡指定關聯表名稱
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<RoleInfo> roles;  // 初始化 roles 集合
 
 }
