@@ -1,11 +1,10 @@
 package com.example.tmnewa.entity;
 
 
+
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Table(name = "user_info")
@@ -20,7 +19,7 @@ public class UserInfo {
     private String account;
 
     private String password;
-
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String name;
 
     @Column(updatable = false)
@@ -35,6 +34,6 @@ public class UserInfo {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<RoleInfo> roles;  // 初始化 roles 集合
+    private Set<RoleInfo> roleInfos;  // 初始化 roles 集合
 
 }

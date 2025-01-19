@@ -17,6 +17,7 @@ public class RoleInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String name;
 
     @Column(updatable = false)
@@ -25,6 +26,6 @@ public class RoleInfo {
     private LocalDateTime updatedAt;
 
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<UserInfo> users = new HashSet<>();  // 初始化 users 集合
+    @ManyToMany(mappedBy = "roleInfos")
+    private Set<UserInfo> userInfos;  // 初始化 users 集合
 }

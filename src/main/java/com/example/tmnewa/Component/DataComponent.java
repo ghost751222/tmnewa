@@ -28,7 +28,6 @@ public class DataComponent {
     PasswordEncoder passwordEncoder;
 
     @PostConstruct
-    @Transactional
     public void AddAdminUser() {
 
         String roleName = roleAdminName;
@@ -56,7 +55,7 @@ public class DataComponent {
         String name = "admin";
 
         UserInfo userInfo = userInfoRepository.findByName(name);
-
+        //UserInfo userInfo = userInfoRepository.findById(49L).get();
 
         if (userInfo == null) {
             userInfo = new UserInfo();
@@ -65,10 +64,10 @@ public class DataComponent {
             userInfo.setName(name);
             userInfo.setCreatedAt(LocalDateTime.now());
             userInfo.setUpdatedAt(LocalDateTime.now());
-            userInfo.setRoles(new HashSet<>());
+            userInfo.setRoleInfos(new HashSet<>());
 
             roleInfo = roleInfoService.findByName(roleAdminName);
-            userInfo.getRoles().add(roleInfo);
+            //userInfo.getRoleInfos().add(roleInfo);
 
             userInfoRepository.save(userInfo);
         }
