@@ -1,0 +1,198 @@
+<html layout:decorate="~{fragments/layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+
+<title layout:fragment="title">質檢模板</title>
+
+<body>
+
+
+<div id="app" layout:fragment="content">
+
+
+    <modal v-if="showModal" @close="showModal = false">
+
+        <form slot="body" class="form" @submit.prevent="save">
+            <div class="form-group">
+                <label for="account">顯示名稱</label>
+                <input type="text" class="form-control" id="account" required
+                       v-model="qaDesignTemplate.name" placeholder="Enter Account"/>
+
+            </div>
+
+
+            <div class="form-group">
+                <label for="name">產品名稱</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter Name" required
+                       v-model="qaDesignTemplate.product"/>
+            </div>
+
+
+            <div class="text-right">
+                <button class="btn btn-primary">ok</button>
+                <input type="button" class="btn btn-primary" @click="close" value="close"/>
+            </div>
+
+
+        </form>
+
+    </modal>
+
+    <div class="container-fluid h-100" id="qaDesignItemDiv" style="display:none">
+        <iframe id="iframe" style="width:100%;height:100%"></iframe>
+    </div>
+    <div class="container-fluid" id="qaDesignTemplateDiv">
+
+
+        <form class="" @submit.prevent>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary mb-2" @click="add">{{addValue}}</button>
+            </div>
+        </form>
+
+
+        <div class="pagination ui basic segment grid">
+            <vuetable-pagination-info ref="paginationInfo"></vuetable-pagination-info>
+
+            <vuetable-pagination ref="pagination"
+                                 @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
+        </div>
+
+        <vuetable ref="vuetable" :api-url="url" :load-on-start="false" :fields="fields" :per-page="perPage"
+                  :append-params="appendParams" :transform="transformData" @vuetable:load-success="loadSuccess"
+                  :query-params="{  page: 'pageIndex',perPage:'pageSize',sort:'sort'}" :reactive-api-url="false"
+                  track-by="id" data-path="data" pagination-path="pagination" :sort-order="sortOrder"
+                  @vuetable:pagination-data="onPaginationData">
+
+            <div slot="actions" slot-scope="props">
+
+                <button class="btn btn-primary btn-sm" @click="editRow(props.rowData)" title="edit">
+                    <i class="fas fa-edit">編輯模板</i>
+                </button>
+
+                <button class="btn btn-primary btn-sm" @click="openQaDesignItem(props.rowData)" title="open">
+                    <i class="fas fa-edit">編輯質檢點</i>
+                </button>
+
+                <button class="btn btn-danger btn-sm" @click="deleteRow(props.rowData)" title="delete">
+                    <i class="fa fa-trash">刪除模板</i>
+                </button>
+            </div>
+        </vuetable>
+
+    </div>
+</div>
+<th:block layout:fragment="script">
+
+    <script th:inline="javascript">
+        const vue = new Vue({
+           el:'#app',
+           data:{
+             qaDesignTemplate:{
+                  id:null,
+                  name:null,
+                  product:null,
+             },
+             action:null,
+             showModal: false,
+             fields:[{name:'id',title:'ID'},{name:'name',title:'名稱'},{name:'product',title:'產品名稱'},{ "name": "actions", "title": "Actions" }],
+             url:[[@{/qaDesignTemplate/data}]],
+             sortOrder : [{field:"Id",direction:"asc"}],
+             addValue:"新增質檢模板",
+             queryValue:"搜尋模板"
+           },
+           methods:{
+               open(){
+                 this.showModal=true;
+               },close(){
+                  this.showModal=false;
+               },
+               save(){
+                    this.sendData()
+               },
+               add(){
+                   this.action = "add"
+                   this.qaDesignTemplate.id="";
+                   this.qaDesignTemplate.name = "";
+                   this.qaDesignTemplate.product = "";
+                   this.open();
+               },
+               query(){
+                     this.appendParams= {}
+                     this.$nextTick(function(){
+                         this.$refs.vuetable.refresh()
+                     });
+               },
+                editRow(rowData){
+                   this.action = "upd"
+                   this.qaDesignTemplate.id = rowData.id;
+                   this.qaDesignTemplate.name = rowData.name;
+                   this.qaDesignTemplate.product = rowData.product;
+                   this.open()
+
+                 },
+                 deleteRow(rowData){
+                   this.action = "del"
+                   this.qaDesignTemplate.id = rowData.id;
+                   this.qaDesignTemplate.name = rowData.name;
+                   this.qaDesignTemplate.product = rowData.product;
+                   this.sendData()
+                 },
+                 openQaDesignItem(rowData){
+
+                     document.getElementById('qaDesignItemDiv').style.display = "block"
+                     document.getElementById('iframe').src = "qaDesignItem?qaTemplateId=" +rowData.id
+
+                     document.getElementById('qaDesignTemplateDiv').style.display = "none"
+
+                 },
+                 sendData(){
+
+                     const config = {
+                         url:[[@{/qaDesignTemplate}]],
+                         data:JSON.stringify(vue.qaDesignTemplate),
+                         headers:{
+                             'Content-Type': 'application/json;charset=UTF-8'
+                         }
+                     }
+
+                     switch(this.action){
+                         case "add":
+                             config.method = 'post'
+                             break;
+                          case "del":
+                             config.method = 'delete'
+                             break;
+                          case "upd":
+                             config.method = 'put'
+                             break;
+                     }
+                     this.$http(config).then( (res)=>{
+
+                         if(res.data.statusCode ==200){
+                             vue.showModal = false;
+                             alert(res.data.message)
+                             this.query()
+                         }else{
+                             alert(res.data.message)
+                         }
+                    }).catch(err => {
+
+                         if(err =="Error: Network Error"){
+                              location.reload();
+                         }else{
+                             alert('System Error');
+                             console.log(err)
+                         }
+                    })
+                 }
+             },mounted:function(){
+                 this.query()
+             }
+
+        })
+
+
+    </script>
+</th:block>
+
+</body>
+</html>

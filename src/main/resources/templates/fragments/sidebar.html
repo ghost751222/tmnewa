@@ -25,16 +25,23 @@
 
     <hr class="sidebar-divider">
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#psaeManager" aria-expanded="true"
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#qaManager" aria-expanded="true"
            aria-controls="collapseTwo">
             <i class="fas fa-fw fa-cog"></i>
             <span>質檢列表管理</span>
         </a>
-        <div id="psaeManager" class="collapse" aria-labelledby="headingTwo" data-parent="#psaeManager">
+        <div id="qaManager" class="collapse" aria-labelledby="headingTwo" data-parent="#qaManager">
             <div class="bg-white py-2 collapse-inner rounded">
+
+                <h6 class="collapse-header"></h6>
+                <a class="collapse-item" th:href="@{/qaDesignTemplate}" id="qaDesignTemplate">質檢模板</a>
+
                 <h6 class="collapse-header"></h6>
                 <a class="collapse-item" th:href="@{/qa}" id="qa">質檢列表</a>
             </div>
+
+
+
         </div>
 
 

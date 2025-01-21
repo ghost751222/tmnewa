@@ -55,7 +55,7 @@ public class DataComponent {
         String name = "admin";
 
         UserInfo userInfo = userInfoRepository.findByName(name);
-        //UserInfo userInfo = userInfoRepository.findById(49L).get();
+
 
         if (userInfo == null) {
             userInfo = new UserInfo();
