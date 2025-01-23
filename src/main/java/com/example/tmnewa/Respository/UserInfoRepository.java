@@ -13,14 +13,6 @@ import com.example.tmnewa.vo.RequestQueryVo;
 
 public interface UserInfoRepository extends JpaRepository<UserInfo, Long> {
 
-    //    @Query(
-//            value = "select * from VMS_Recording where try_cast(startTime as date) between :#{#requestQueryVo.startTime} and :#{#requestQueryVo.endTime} " +
-//                    "and (transExt = :#{#requestQueryVo.transExt} or :#{#requestQueryVo.transExt} is null) " +
-//                    "and (ani = :#{#requestQueryVo.ani} or :#{#requestQueryVo.ani} is null) " +
-//                    "and (dnis = :#{#requestQueryVo.dnis} or :#{#requestQueryVo.dnis} is null)" +
-//                    "and (comment like %:#{#requestQueryVo.comment}% or :#{#requestQueryVo.comment} is null)" ,
-//
-//            nativeQuery = true)
 
     @Query(value = "select * from user_info where account != 'admin' and (account = :#{#requestQueryVo.account} or :#{#requestQueryVo.account} is null)", nativeQuery = true)
     Page<UserInfo> findByQueryParameter(@Param("requestQueryVo") RequestQueryVo requestQueryVo, Pageable pageable);

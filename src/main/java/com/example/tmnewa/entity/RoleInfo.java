@@ -1,8 +1,10 @@
 package com.example.tmnewa.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jdk.jfr.Enabled;
 import lombok.Data;
+import org.hibernate.annotations.Nationalized;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -17,7 +19,7 @@ public class RoleInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "NVARCHAR(255)")
+    @Nationalized
     private String name;
 
     @Column(updatable = false)
@@ -27,5 +29,6 @@ public class RoleInfo {
 
 
     @ManyToMany(mappedBy = "roleInfos")
+    @JsonBackReference
     private Set<UserInfo> userInfos;  // 初始化 users 集合
 }

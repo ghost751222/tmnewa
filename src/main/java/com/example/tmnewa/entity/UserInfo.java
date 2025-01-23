@@ -1,11 +1,12 @@
 package com.example.tmnewa.entity;
 
 
-
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Nationalized;
+
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Table(name = "user_info")
 @Entity
@@ -19,12 +20,16 @@ public class UserInfo {
     private String account;
 
     private String password;
-    @Column(columnDefinition = "NVARCHAR(255)")
+
+    @Nationalized
+
     private String name;
 
     @Column(updatable = false)
+    private Long creator;
+    @Column(updatable = false)
     private LocalDateTime createdAt;
-
+    private Long updater;
     private LocalDateTime updatedAt;
 
 
@@ -34,6 +39,6 @@ public class UserInfo {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<RoleInfo> roleInfos;  // 初始化 roles 集合
+    private List<RoleInfo> roleInfos;  // 初始化 roles 集合
 
 }

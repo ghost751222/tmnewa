@@ -34,7 +34,8 @@
             <div class="bg-white py-2 collapse-inner rounded">
 
                 <h6 class="collapse-header"></h6>
-                <a class="collapse-item" th:href="@{/qaDesignTemplate}" id="qaDesignTemplate">質檢模板</a>
+                <a class="collapse-item" th:href="@{/qaDesignTemplate}" id="qaDesignTemplate" th:if="${session.isAdmin}">質檢模板</a>
+
 
                 <h6 class="collapse-header"></h6>
                 <a class="collapse-item" th:href="@{/qa}" id="qa">質檢列表</a>

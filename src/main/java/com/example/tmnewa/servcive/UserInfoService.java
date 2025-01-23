@@ -2,6 +2,7 @@ package com.example.tmnewa.servcive;
 
 import com.example.tmnewa.Respository.UserInfoRepository;
 import com.example.tmnewa.entity.UserInfo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,7 @@ import com.example.tmnewa.vo.RequestQueryVo;
 import java.time.LocalDateTime;
 
 @Service
-public class UserInfoService {
+public class UserInfoService extends LoginService{
 
 
     private final String defaultPassWord = "123456";
@@ -38,19 +39,22 @@ public class UserInfoService {
     }
 
 
-    public UserInfo addUserInfo(UserInfo userInfo) {
+    public UserInfo addUserInfo(UserInfo userInfo) throws JsonProcessingException {
         userInfo.setPassword(passwordEncoder.encode(defaultPassWord));
+        userInfo.setCreator(getLoginId());
         userInfo.setCreatedAt(LocalDateTime.now());
+        userInfo.setUpdater(getLoginId());
         userInfo.setUpdatedAt(LocalDateTime.now());
         return this.save(userInfo);
     }
 
-    public UserInfo updateUserInfo(UserInfo userInfo) {
+    public UserInfo updateUserInfo(UserInfo userInfo) throws JsonProcessingException {
         if(Strings.isEmpty(userInfo.getPassword())){
             userInfo.setPassword(passwordEncoder.encode(defaultPassWord));
         }else{
             userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
         }
+        userInfo.setUpdater(getLoginId());
         userInfo.setUpdatedAt(LocalDateTime.now());
         return this.save(userInfo);
     }

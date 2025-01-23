@@ -12,12 +12,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 @Component
 public class DataComponent {
 
-    String roleAdminName = "管理者";
+    public static String roleAdminName = "管理者";
     @Autowired
     UserInfoRepository userInfoRepository;
 
@@ -64,10 +65,10 @@ public class DataComponent {
             userInfo.setName(name);
             userInfo.setCreatedAt(LocalDateTime.now());
             userInfo.setUpdatedAt(LocalDateTime.now());
-            userInfo.setRoleInfos(new HashSet<>());
+            userInfo.setRoleInfos(new ArrayList<>());
 
             roleInfo = roleInfoService.findByName(roleAdminName);
-            //userInfo.getRoleInfos().add(roleInfo);
+            userInfo.getRoleInfos().add(roleInfo);
 
             userInfoRepository.save(userInfo);
         }

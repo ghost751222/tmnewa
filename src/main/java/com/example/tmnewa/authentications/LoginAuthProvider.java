@@ -2,7 +2,9 @@ package com.example.tmnewa.authentications;
 
 
 import com.example.tmnewa.Respository.UserInfoRepository;
+import com.example.tmnewa.entity.RoleInfo;
 import com.example.tmnewa.entity.UserInfo;
+import com.example.tmnewa.servcive.RoleInfoService;
 import com.example.tmnewa.utils.JacksonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,11 +28,16 @@ public class LoginAuthProvider implements AuthenticationProvider {
 
     UserInfoRepository userInfoRepository;
 
+    RoleInfoService roleInfoService;
+
     HttpSession httpSession;
+
+
     @Autowired
-    public LoginAuthProvider(PasswordEncoder encoder, UserInfoRepository userInfoRepository,HttpSession httpSession) {
+    public LoginAuthProvider(PasswordEncoder encoder, UserInfoRepository userInfoRepository, RoleInfoService roleInfoService, HttpSession httpSession) {
         this.passwordEncoder = encoder;
         this.userInfoRepository = userInfoRepository;
+        this.roleInfoService = roleInfoService;
         this.httpSession = httpSession;
     }
 
@@ -50,8 +57,18 @@ public class LoginAuthProvider implements AuthenticationProvider {
 
         } else {
             String password = userInfo.getPassword();
+            boolean isSuperUser = false;
             if (passwordEncoder.matches(rawPassword, password)) {
-                httpSession.setAttribute("isAdmin",true);
+
+
+                for(RoleInfo roleInfo:userInfo.getRoleInfos()){
+                    if(roleInfoService.isSuperUser(roleInfo.getName())){
+                        isSuperUser =true;
+                        break;
+                    }
+                }
+
+                httpSession.setAttribute("isAdmin",isSuperUser);
                 httpSession.setAttribute("name",userInfo.getName());
                 httpSession.setAttribute("userInfo", JacksonUtils.writeValueAsString(userInfo));
                 return new UsernamePasswordAuthenticationToken

@@ -4,6 +4,7 @@ package com.example.tmnewa.controller;
 import com.example.tmnewa.entity.UserInfo;
 import com.example.tmnewa.servcive.UserInfoService;
 import com.example.tmnewa.utils.JacksonUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class UserInfoController {
 
     @RequestMapping(value = {"/", ""}, method = RequestMethod.POST)
     @ResponseBody
-    public ResponseVo<UserInfo> addUserInfo(@RequestBody UserInfo userInfo) {
+    public ResponseVo<UserInfo> addUserInfo(@RequestBody UserInfo userInfo) throws JsonProcessingException {
         ResponseVo<UserInfo> responseVo = new ResponseVo<>();
         responseVo.setMessage("新增成功");
         responseVo.setData(userInfoService.addUserInfo(userInfo));
@@ -75,7 +76,7 @@ public class UserInfoController {
 
     @RequestMapping(value = {"/", ""}, method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseVo<UserInfo> updateUserInfo(@RequestBody UserInfo userInfo) {
+    public ResponseVo<UserInfo> updateUserInfo(@RequestBody UserInfo userInfo) throws JsonProcessingException {
         ResponseVo<UserInfo> responseVo = new ResponseVo<>();
         responseVo.setMessage("更新成功");
         responseVo.setData(userInfoService.updateUserInfo(userInfo));
