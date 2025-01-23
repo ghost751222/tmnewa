@@ -13,8 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import vo.RequestQueryVo;
-import vo.ResponseVo;
+import com.example.tmnewa.vo.RequestQueryVo;
+import com.example.tmnewa.vo.ResponseVo;
 
 import java.util.Map;
 

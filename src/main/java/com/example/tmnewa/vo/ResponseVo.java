@@ -1,4 +1,4 @@
-package vo;
+package com.example.tmnewa.vo;
 
 
 import lombok.Data;

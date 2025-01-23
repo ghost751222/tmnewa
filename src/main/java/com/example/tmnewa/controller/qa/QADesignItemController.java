@@ -2,7 +2,6 @@ package com.example.tmnewa.controller.qa;
 
 
 import com.example.tmnewa.entity.qa.QADesignItem;
-import com.example.tmnewa.entity.qa.QADesignTemplate;
 import com.example.tmnewa.servcive.qa.QADesignItemService;
 import com.example.tmnewa.utils.JacksonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,8 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import vo.RequestQueryVo;
-import vo.ResponseVo;
+import com.example.tmnewa.vo.RequestQueryVo;
+import com.example.tmnewa.vo.ResponseVo;
 
 import java.util.List;
 import java.util.Map;
@@ -45,8 +44,8 @@ public class QADesignItemController {
     public Page<QADesignItem> index(@RequestParam Map<String, Object> params) {
 
         RequestQueryVo requestQueryVo = JacksonUtils.mapToObject(params, RequestQueryVo.class);
-        Long qaTemplateId = params.containsKey("qaTemplateId") ? (Long) params.get("qaTemplateId") : null;
-        Long parentId = params.containsKey("parentId") ? (Long) params.get("parentId") : null;
+        Long qaTemplateId = params.containsKey("qaTemplateId") ?Long.parseLong((String) params.get("qaTemplateId")) : null;
+        Long parentId = params.containsKey("parentId") ? Long.parseLong((String)params.get("parentId")) : null;
         String sortSource = requestQueryVo.getSort();
         String sortField = null;
         String sortDirection = null;

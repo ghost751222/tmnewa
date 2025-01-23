@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vo.RequestQueryVo;
+import com.example.tmnewa.vo.RequestQueryVo;
 
 import java.time.LocalDateTime;
 
@@ -30,8 +30,10 @@ public class QADesignTemplateService extends LoginService {
     }
 
 
+    @Transactional
     public QADesignTemplate deleteQADesignTemplate(QADesignTemplate qaDesignTemplate) {
         qaDesignTemplateRepository.delete(qaDesignTemplate);
+        qaDesignItemRepository.deleteByQaTemplateId(qaDesignTemplate.getId());
         return qaDesignTemplate;
     }
 

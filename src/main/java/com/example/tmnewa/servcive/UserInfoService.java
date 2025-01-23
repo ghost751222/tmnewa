@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import vo.RequestQueryVo;
+import com.example.tmnewa.vo.RequestQueryVo;
 
 import java.time.LocalDateTime;
 

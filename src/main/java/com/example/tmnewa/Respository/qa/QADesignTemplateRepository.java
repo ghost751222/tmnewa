@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import vo.RequestQueryVo;
+import com.example.tmnewa.vo.RequestQueryVo;
 
 @Repository
 public interface QADesignTemplateRepository extends JpaRepository<QADesignTemplate, Long> {

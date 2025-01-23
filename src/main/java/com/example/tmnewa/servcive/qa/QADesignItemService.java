@@ -3,14 +3,12 @@ package com.example.tmnewa.servcive.qa;
 
 import com.example.tmnewa.Respository.qa.QADesignItemRepository;
 import com.example.tmnewa.entity.qa.QADesignItem;
-import com.example.tmnewa.entity.qa.QADesignTemplate;
 import com.example.tmnewa.servcive.LoginService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import vo.RequestQueryVo;
 
 import java.time.LocalDateTime;
 import java.util.List;

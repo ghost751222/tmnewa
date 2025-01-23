@@ -5,14 +5,11 @@
     <head th:insert="~{fragments/head :: head}"></head>
     <title>評分細項編輯</title>
     <style>
-
-        body {
-            font-family: Menlo, Consolas, monospace;
-            color: #444;
-        }
-
+        
         .item {
             cursor: pointer;
+            font-family: Menlo, Consolas, monospace;
+            color: #444;
         }
 
         .item div:hover {
@@ -102,7 +99,11 @@
             <div slot="actions" slot-scope="props">
 
                 <button class="btn btn-primary btn-sm" @click="editRow(props.rowData)" title="edit">
-                    <i class="fas fa-edit">編輯質檢點</i>
+                    <i class="fas fa-edit">編輯評分項目</i>
+                </button>
+
+                <button class="btn btn-danger btn-sm" @click="deleteRow(props.rowData)" title="delete">
+                    <i class="fa fa-trash">刪除評分項目</i>
                 </button>
             </div>
         </vuetable>
@@ -173,6 +174,7 @@
         const vue = new Vue({
             el: '#app',
             data: {
+                qaTemplateId:null,
                 qaDesignItem: {
                     id: null,
                     name: null,
@@ -212,10 +214,13 @@
                     this.openModal()
                 },
                 query() {
-                    this.appendParams = {}
-                    this.$nextTick(function () {
+                    this.appendParams= {}
+                    this.appendParams["qaTemplateId"] = this.itemSelected.qaTemplateId;
+                    this.appendParams["parentId"] = this.itemSelected.id;
+                    this.$nextTick(function(){
                         this.$refs.vuetable.refresh()
                     });
+                    this.findTreeData();
                 },
                 findTreeData() {
                     let urlParams = new URLSearchParams(window.location.search);
@@ -226,26 +231,19 @@
                     }).catch(err => {
                         alert(err)
                     })
+                    this.qaTemplateId = qaTemplateId
                     this.qaDesignItem.qaTemplateId =qaTemplateId
                 },
                 itemClick: function (item) {
                     this.itemSelected = item
-
-                    this.data = [];
-                    if (item.isFolder) {
-                        item.children.forEach((c, index) => {
-                            this.data.push(c)
-                        })
-                    } else {
-                        this.data.push(item)
-                    }
+                    this.query()
                 },
                 editRow(rowData) {
                     this.action = "upd"
                     this.qaDesignItem.id = rowData.id;
                     this.qaDesignItem.name = rowData.name;
                     this.qaDesignItem.seq = rowData.seq;
-                    this.parentId.name = rowData.parentId;
+                    this.qaDesignItem.parentId = rowData.parentId;
                     this.openModal();
 
                 },
