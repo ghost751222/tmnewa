@@ -5,20 +5,21 @@
 <body>
 <div layout:fragment="content" id="app">
 <h1>Inspection Points</h1>
-    <table>
+    <table class="table table-bordered">
         <thead>
         <tr>
             <th>Inspection Points</th>
         </tr>
         </thead>
         <tbody>
-        <inspection-point
+
+        <tr is="inspection-point"
                 v-for="(point, index) in inspectionPoints"
                 :key="index"
                 :point="point"
                 :depth="1"
                 >
-        </inspection-point>
+        </tr>
 
         </tbody>
     </table>
@@ -48,12 +49,12 @@
                   return point.children.reduce((sum, child) => sum + this.getRowCount(child), 0);
                 }
                 ,getColSpan(depth){
-                  return this.maxDepth - depth + 1;
+                  return this.maxDepth - depth ;
                 }
               },
               template: `
                 <tr>
-                  <td :rowspan="getRowCount(point)">{{ point.name }}</td>
+                  <td >{{ point.name }}</td>
                   <template v-if="point.children && point.children.length > 0">
                     <inspection-point
                       v-for="(child, index) in point.children"
@@ -88,7 +89,7 @@
            },mounted:function(){
                     let url = "qaDesignItem/" + 1
                     axios.get(url).then(res => {
-                        this.inspectionPoints = res.data
+                        this.inspectionPoints = res.data[0].children
 
                     }).catch(err => {
                         alert(err)
