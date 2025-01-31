@@ -1,104 +1,155 @@
 <html layout:decorate="~{fragments/layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
+
 <head>
-    <title>質檢清單</title>
+    <title layout:fragment="title">質檢清單</title>
+    <style layout:fragment="style">
+        td {
+            text-align: center;
+            vertical-align: middle !important;
+        }
+
+        th {
+            text-align: center !important;
+            vertical-align: middle !important;
+        }
+    </style>
 </head>
+
 <body>
 <div layout:fragment="content" id="app">
-<h1>Inspection Points</h1>
+    <h1>Inspection Points</h1>
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th>Inspection Points</th>
+            <th :colspan="treeMaxDepth">評分項目</th>
+            <th>分數</th>
+            <th>主管評分</th>
         </tr>
         </thead>
         <tbody>
-
         <tr is="inspection-point"
-                v-for="(point, index) in inspectionPoints"
-                :key="index"
-                :point="point"
-                :depth="1"
-                >
+            v-for="(point, index) in inspectionPoints"
+            :key="index"
+            :point="point"
+            :tree-max-depth="treeMaxDepth"
+            :is-root="true"
+            :depth="1">
         </tr>
-
         </tbody>
     </table>
 </div>
 </body>
 
 <th:block layout:fragment="script">
-
     <script th:inline="javascript">
-        Vue.component("inspection-point",{
-              props: {
+        Vue.component("inspection-point", {
+            props: {
                 point: {
-                  type: Object,
-                  required: true
+                    type: Object,
+                    required: true
                 },
-                depth:{
-                  type: Number,
-                  required: true
+                depth: {
+                    type: Number,
+                    required: true
                 },
-              },
-              methods: {
+                isRoot:{
+                    type: Boolean,
+                    required: true
+                },
+                treeMaxDepth:{
+                    type: Number,
+                    required: true
+                }
+            },
+            methods: {
                 // 計算節點的 rowspan (行數)
                 getRowCount(point) {
-                  if (!point.children || point.children.length === 0) {
-                    return 1;
-                  }
-                  return point.children.reduce((sum, child) => sum + this.getRowCount(child), 0);
+                    if (!point.children || point.children.length === 0) {
+                        return 1;
+                    }
+                    return point.children.reduce((sum, child) => sum + this.getRowCount(child), 0);
+                },
+                // 計算 colspan
+                getColSpan(depth) {
+                    return this.maxDepth - depth + 1; // 計算 colSpan，+1 保證跨越所有剩餘列
                 }
-                ,getColSpan(depth){
-                  return this.maxDepth - depth ;
+            },
+            computed: {
+                isLeafNode() {
+                    return !this.point.children || this.point.children.length === 0;
+                },
+                maxDepth(){
+                    if(this.isRoot && this.isLeafNode){
+                        return this.treeMaxDepth
+                    }
+                    else{
+                        return this.getRowCount(this.point)
+
+                    }
                 }
-              },
-              template: `
+            },
+            template: `
                 <tr>
-                  <td >{{ point.name }}</td>
-                  <template v-if="point.children && point.children.length > 0">
-                    <inspection-point
-                      v-for="(child, index) in point.children"
-                      :key="index"
-                      :point="child"
-                      :depth="depth + 1"
-                      >
-                    </inspection-point>
-                  </template>
+                    <td :colSpan="maxDepth">{{ point.name }}</td>
+                    <template v-if="point.children && point.children.length > 0">
+                        <inspection-point
+                            v-for="(child, index) in point.children"
+                            :key="index"
+                            :point="child"
+                            :is-root="false"
+                            :tree-max-depth="treeMaxDepth"
+                            :depth="depth + 1"
+                        >
+                        </inspection-point>
+                    </template>
+                    <template v-else>
+                        <!-- 最後一個節點加上 colspan -->
+                        <td ><input type="number" min="0"></td>
+                        <td ><input type="number" min="0"></td>
+                    </template>
                 </tr>
-              `
-            })
+            `
+        });
+
         const vue = new Vue({
-           el:'#app',
-           data:{
-             qaDesignTemplate:{
-                  id:null,
-                  name:null,
-                  product:null,
-             },
-             action:null,
-             showModal: false,
-             fields:[{name:'id',title:'ID'},{name:'name',title:'名稱'},{name:'product',title:'產品名稱'},{ "name": "actions", "title": "Actions" }],
-             url:[[@{/qaDesignTemplate/data}]],
-             sortOrder : [{field:"Id",direction:"asc"}],
-             inspectionPoints:[],
-           },
-           methods:{
-
-
-
-           },mounted:function(){
-                    let url = "qaDesignItem/" + 1
-                    axios.get(url).then(res => {
-                        this.inspectionPoints = res.data[0].children
-
-                    }).catch(err => {
-                        alert(err)
-                    })
-           }
-
+            el: '#app',
+            data: {
+                qaDesignTemplate: {
+                    id: null,
+                    name: null,
+                    product: null,
+                },
+                action: null,
+                showModal: false,
+                fields: [{ name: 'id', title: 'ID' }, { name: 'name', title: '名稱' }, { name: 'product', title: '產品名稱' }, { "name": "actions", "title": "Actions" }],
+                url: [[@{/qaDesignTemplate/data}]],
+                sortOrder: [{ field: "Id", direction: "asc" }],
+                inspectionPoints: [],
+                treeMaxDepth: 0,  // 新增 maxDepth 來記錄最大深度
+            },
+            methods: {
+                // 計算樹狀結構的最大深度
+                calculateMaxDepth(points, currentDepth = 1) {
+                    points.forEach(point => {
+                        if (point.children && point.children.length > 0) {
+                            this.calculateMaxDepth(point.children, currentDepth + 1);
+                        }
+                    });
+                    this.treeMaxDepth = Math.max(this.treeMaxDepth, currentDepth);
+                }
+            },
+            mounted: function () {
+                let url = "qaDesignItem/" + 1;
+                axios.get(url).then(res => {
+                    this.inspectionPoints = res.data[0].children;
+                    // 計算最大深度
+                    this.calculateMaxDepth(this.inspectionPoints);
+                }).catch(err => {
+                    alert(err);
+                });
+            }
         })
-
-
     </script>
 </th:block>
+
 </html>
