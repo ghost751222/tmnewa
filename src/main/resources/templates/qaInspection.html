@@ -21,7 +21,8 @@
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th :colspan="treeMaxDepth">評分項目</th>
+            <th :colSpan="treeMaxDepth">評分項目</th>
+
             <th>分數</th>
             <th>主管評分</th>
         </tr>
@@ -67,11 +68,20 @@
                     if (!point.children || point.children.length === 0) {
                         return 1;
                     }
-                    return point.children.reduce((sum, child) => sum + this.getRowCount(child), 0);
+                    return point.children.reduce((sum, child) => sum + this.getRowCount(child), 1);
                 },
                 // 計算 colspan
                 getColSpan(depth) {
-                    return this.maxDepth - depth + 1; // 計算 colSpan，+1 保證跨越所有剩餘列
+                    if(this.isRoot && this.isLeafNode){
+                        return this.maxDepth
+                    }
+                    else if(this.isLeafNode){
+                        // 計算 colSpan，+1 保證跨越所有剩餘列
+                        return this.maxDepth - depth + 1;
+                    }
+                    else{
+                        return 1
+                    }
                 }
             },
             computed: {
@@ -79,35 +89,30 @@
                     return !this.point.children || this.point.children.length === 0;
                 },
                 maxDepth(){
-                    if(this.isRoot && this.isLeafNode){
-                        return this.treeMaxDepth
-                    }
-                    else{
-                        return this.getRowCount(this.point)
-
-                    }
+                   return this.treeMaxDepth;
                 }
             },
             template: `
-                <tr>
-                    <td :colSpan="maxDepth">{{ point.name }}</td>
-                    <template v-if="point.children && point.children.length > 0">
-                        <inspection-point
+             <fragment>
+                 <tr>
+                    <td :rowSpan="getRowCount(point)" :colSpan="getColSpan(depth)">{{point.name}}</td>
+                    <template v-if="point.children.length == 0">
+                        <td ><input type="number" min="0"></td>
+                        <td ><input type="number" min="0"></td>
+                    </template>
+                 </tr>
+                  <tr is="inspection-point" v-if="point.children && point.children.length > 0"
                             v-for="(child, index) in point.children"
                             :key="index"
                             :point="child"
                             :is-root="false"
                             :tree-max-depth="treeMaxDepth"
                             :depth="depth + 1"
-                        >
-                        </inspection-point>
-                    </template>
-                    <template v-else>
-                        <!-- 最後一個節點加上 colspan -->
-                        <td ><input type="number" min="0"></td>
-                        <td ><input type="number" min="0"></td>
-                    </template>
-                </tr>
+                  >
+                 </tr>
+
+
+             </fragment>
             `
         });
 

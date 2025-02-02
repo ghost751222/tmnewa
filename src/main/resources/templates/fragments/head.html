@@ -16,6 +16,7 @@
     <script th:src="@{/js/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
     <script th:src="@{/js/lib/vue.js}"></script>
+    <script th:src="@{/js/lib/vue-fragment.min.js}"></script>
     <script th:src="@{/js/lib/vuetable.js}"></script>
     <script th:src="@{/js/lib/axios.min.js}"></script>
     <script th:src="@{/js/lib/sockjs.min.js}"></script>
@@ -36,7 +37,7 @@
             }
             return res;
         });
-
+        Vue.use(Fragment.Plugin)
         Vue.use(Vuetable)
         Vue.component('vuetable-pagination', Vuetable.VuetablePagination)
         Vue.component("vuetable-pagination-dropdown", Vuetable.VueTablePaginationDropDown);
@@ -45,6 +46,7 @@
         Vue.component('modal', {
             template: '#modal-template'
         })
+
         Vue.mixin({
           props: {
             appendParams: {
