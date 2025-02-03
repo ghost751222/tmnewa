@@ -18,11 +18,12 @@
 <body>
 <div layout:fragment="content" id="app">
     <h1>Inspection Points</h1>
+    <button @click="click">Click</button>
     <table class="table table-bordered">
-        <thead>
+        <thead class="thead-light">
         <tr>
             <th :colSpan="treeMaxDepth">評分項目</th>
-
+            <th>備註</th>
             <th>分數</th>
             <th>主管評分</th>
         </tr>
@@ -30,7 +31,7 @@
         <tbody>
         <tr is="inspection-point"
             v-for="(point, index) in inspectionPoints"
-            :key="index"
+            :key="point.id"
             :point="point"
             :tree-max-depth="treeMaxDepth"
             :is-root="true"
@@ -97,13 +98,14 @@
                  <tr>
                     <td :rowSpan="getRowCount(point)" :colSpan="getColSpan(depth)">{{point.name}}</td>
                     <template v-if="point.children.length == 0">
-                        <td ><input type="number" min="0"></td>
-                        <td ><input type="number" min="0"></td>
+                        <td ><textarea v-model="point.notes"/></td>
+                        <td ><input type="number" min="0" v-model="point.score"/></td>
+                        <td ><input type="number" min="0" v-model="point.supervisorScore"/></td>
                     </template>
                  </tr>
                   <tr is="inspection-point" v-if="point.children && point.children.length > 0"
                             v-for="(child, index) in point.children"
-                            :key="index"
+                            :key="child.id"
                             :point="child"
                             :is-root="false"
                             :tree-max-depth="treeMaxDepth"
@@ -115,7 +117,7 @@
              </fragment>
             `
         });
-
+        
         const vue = new Vue({
             el: '#app',
             data: {
@@ -138,9 +140,27 @@
                     points.forEach(point => {
                         if (point.children && point.children.length > 0) {
                             this.calculateMaxDepth(point.children, currentDepth + 1);
+                        }else{
+
+                           if(!point.hasOwnProperty("notes")){
+                             point.notes= ""
+                           }
+
+
+                           if(!point.hasOwnProperty("supervisorScore")){
+                             point.supervisorScore= ""
+                           }
+
+                           if(!point.hasOwnProperty("score")){
+                             point.score = ""
+                           }
+
                         }
                     });
                     this.treeMaxDepth = Math.max(this.treeMaxDepth, currentDepth);
+                },
+                click(){
+                    console.log(this.inspectionPoints)
                 }
             },
             mounted: function () {

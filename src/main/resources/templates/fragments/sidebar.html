@@ -68,14 +68,23 @@
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
     <script type="text/javascript">
-        $("a[class='collapse-item']").click(function(e){
-           sessionStorage.setItem("id", this.id);
-        })
-        $(document).ready(function(){
-            if(sessionStorage.getItem("id")){
-                var _id = sessionStorage.getItem("id")
-                $("#" + _id).parent().parent().toggleClass('show')
-            }
-        })
+
+      $("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
+
+          $("body").toggleClass("sidebar-toggled");
+          $(".sidebar").toggleClass("toggled");
+          if ($(".sidebar").hasClass("toggled")) {
+            $('.sidebar .collapse').collapse('hide');
+          };
+      });
+      $("a[class='collapse-item']").click(function(e){
+         sessionStorage.setItem("id", this.id);
+      })
+      $(document).ready(function(){
+          if(sessionStorage.getItem("id")){
+              var _id = sessionStorage.getItem("id")
+              $("#" + _id).parent().parent().toggleClass('show')
+          }
+      })
     </script>
 </ul>
