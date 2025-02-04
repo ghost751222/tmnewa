@@ -13,7 +13,9 @@ public interface QADesignItemRepository extends JpaRepository<QADesignItem, Long
 
 
     void deleteByQaTemplateId(Long templateId);
+    List<QADesignItem> findByQaTemplateId(Long templateId);
     List<QADesignItem> findByQaTemplateIdAndParentIdOrderBySeqAsc(Long templateId, Long parentId);
+    List<QADesignItem> findByQaTemplateIdAndParentIdOrderBySeqDesc(Long templateId, Long parentId);
     Page<QADesignItem> findPageByQaTemplateIdAndParentId(Long qaTemplateId,Long parentId,Pageable pageable);
 
 }

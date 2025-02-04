@@ -19,12 +19,21 @@ public class QADesignItemService extends LoginService {
     @Autowired
     QADesignItemRepository qaDesignItemRepository;
 
+    public List<QADesignItem> findByQaTemplateId(Long templateID) {
+        return qaDesignItemRepository.findByQaTemplateId(templateID);
+    }
+
+
     private List<QADesignItem> findByTemplateIDAndPidOrderBySeqAsc(Long templateID, Long pid) {
         return qaDesignItemRepository.findByQaTemplateIdAndParentIdOrderBySeqAsc(templateID, pid);
     }
 
+    private List<QADesignItem> findByTemplateIDAndPidOrderBySeqDesc(Long templateID, Long pid) {
+        return qaDesignItemRepository.findByQaTemplateIdAndParentIdOrderBySeqDesc(templateID, pid);
+    }
+
     public List<QADesignItem> findAllChildrenByTemplateIDAndPid(Long templateID, Long parentId) {
-        List<QADesignItem> parent = findByTemplateIDAndPidOrderBySeqAsc(templateID, parentId);
+        List<QADesignItem> parent = findByTemplateIDAndPidOrderBySeqDesc(templateID, parentId);
         if (parent != null) {
             for (QADesignItem qaDesignItem : parent) {
                 qaDesignItem.setChildren(findAllChildrenByTemplateIDAndPid(templateID, qaDesignItem.getId()));
