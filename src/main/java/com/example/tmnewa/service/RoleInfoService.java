@@ -1,4 +1,4 @@
-package com.example.tmnewa.servcive;
+package com.example.tmnewa.service;
 
 import com.example.tmnewa.Component.DataComponent;
 import com.example.tmnewa.Respository.RoleInfoRepository;

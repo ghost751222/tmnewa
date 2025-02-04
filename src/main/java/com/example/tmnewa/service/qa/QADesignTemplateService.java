@@ -1,11 +1,11 @@
-package com.example.tmnewa.servcive.qa;
+package com.example.tmnewa.service.qa;
 
 
 import com.example.tmnewa.Respository.qa.QADesignItemRepository;
 import com.example.tmnewa.Respository.qa.QADesignTemplateRepository;
 import com.example.tmnewa.entity.qa.QADesignItem;
 import com.example.tmnewa.entity.qa.QADesignTemplate;
-import com.example.tmnewa.servcive.LoginService;
+import com.example.tmnewa.service.LoginService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

@@ -2,7 +2,7 @@ package com.example.tmnewa.controller;
 
 
 import com.example.tmnewa.entity.UserInfo;
-import com.example.tmnewa.servcive.UserInfoService;
+import com.example.tmnewa.service.UserInfoService;
 import com.example.tmnewa.utils.JacksonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpSession;

@@ -2,7 +2,7 @@ package com.example.tmnewa.controller.qa;
 
 
 import com.example.tmnewa.entity.qa.QADesignTemplate;
-import com.example.tmnewa.servcive.qa.QADesignTemplateService;
+import com.example.tmnewa.service.qa.QADesignTemplateService;
 import com.example.tmnewa.utils.JacksonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;

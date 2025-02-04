@@ -3,17 +3,14 @@ package com.example.tmnewa.Component;
 import com.example.tmnewa.Respository.UserInfoRepository;
 import com.example.tmnewa.entity.RoleInfo;
 import com.example.tmnewa.entity.UserInfo;
-import com.example.tmnewa.servcive.RoleInfoService;
+import com.example.tmnewa.service.RoleInfoService;
 import jakarta.annotation.PostConstruct;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 @Component
 public class DataComponent {

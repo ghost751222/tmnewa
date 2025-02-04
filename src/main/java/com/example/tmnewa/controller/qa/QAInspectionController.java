@@ -1,16 +1,11 @@
 package com.example.tmnewa.controller.qa;
 
 
-import com.example.tmnewa.entity.qa.QADesignItem;
 import com.example.tmnewa.entity.qa.QAInspection;
-import com.example.tmnewa.servcive.qa.QADesignItemService;
-import com.example.tmnewa.servcive.qa.QADesignTemplateService;
-import com.example.tmnewa.servcive.qa.QAInspectionService;
-import com.example.tmnewa.vo.ResponseVo;
+import com.example.tmnewa.service.qa.QAInspectionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

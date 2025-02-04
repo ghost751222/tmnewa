@@ -1,4 +1,4 @@
-package com.example.tmnewa.servcive;
+package com.example.tmnewa.service;
 
 import com.example.tmnewa.Respository.UserInfoRepository;
 import com.example.tmnewa.entity.UserInfo;
