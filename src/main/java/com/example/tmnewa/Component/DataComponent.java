@@ -33,18 +33,22 @@ public class DataComponent {
             roleInfo = roleInfoService.findByRoleCode(roleCode);
             if (roleInfo == null) {
                 roleInfo = new RoleInfo();
-                if(roleCode.equals("0")){
-                    roleInfo.setName("管理者");
-                    roleInfo.setRoleName("ROLE_ADMIN");
-                    roleInfo.setRoleCode("0");
-                } else if (roleCode.equals("1")) {
-                    roleInfo.setName("主管");
-                    roleInfo.setRoleName("ROLE_MANAGER");
-                    roleInfo.setRoleCode("1");
-                } else if (roleCode.equals("2")) {
-                    roleInfo.setName("質檢員");
-                    roleInfo.setRoleName("ROLE_USER");
-                    roleInfo.setRoleCode("2");
+                switch (roleCode) {
+                    case "0" -> {
+                        roleInfo.setName("管理者");
+                        roleInfo.setRoleName("ROLE_ADMIN");
+                        roleInfo.setRoleCode("0");
+                    }
+                    case "1" -> {
+                        roleInfo.setName("主管");
+                        roleInfo.setRoleName("ROLE_MANAGER");
+                        roleInfo.setRoleCode("1");
+                    }
+                    case "2" -> {
+                        roleInfo.setName("質檢員");
+                        roleInfo.setRoleName("ROLE_USER");
+                        roleInfo.setRoleCode("2");
+                    }
                 }
                 roleInfo.setCreatedAt(LocalDateTime.now());
                 roleInfo.setUpdatedAt(LocalDateTime.now());
