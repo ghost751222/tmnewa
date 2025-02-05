@@ -3,7 +3,7 @@
     <property name="PROJECT" value="twnewa"/>
     <property name="LOGS" value="${user.dir}/logs"/>
     <property name="PATTERN"
-              value="%highlight(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1} [%line])- %msg%n%throwable"/>
+              value="[%highlight(%d{ISO8601})] [%highlight(%-5level)] [%blue(%t)] %yellow(%C{1} [%line])- %msg%n%throwable"/>
     <appender name="Console"
               class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
@@ -21,7 +21,7 @@
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] [%-5level] [%logger] [%line] - %msg%n%throwable</pattern>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%-5level] [%logger] [%line] - %msg%n%throwable</pattern>
         </encoder>
     </appender>
 
