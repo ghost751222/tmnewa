@@ -15,7 +15,7 @@ import java.util.ArrayList;
 @Component
 public class DataComponent {
 
-    public static String roleAdminName = "管理者";
+    public final static String RoleAdminCode = "0";
     @Autowired
     UserInfoRepository userInfoRepository;
 
@@ -27,25 +27,29 @@ public class DataComponent {
 
     @PostConstruct
     public void AddAdminUser() {
-
-        String roleName = roleAdminName;
-        RoleInfo roleInfo = roleInfoService.findByName(roleName);
-        if (roleInfo == null) {
-            roleInfo = new RoleInfo();
-            roleInfo.setName(roleName);
-            roleInfo.setCreatedAt(LocalDateTime.now());
-            roleInfo.setUpdatedAt(LocalDateTime.now());
-            roleInfoService.save(roleInfo);
-        }
-
-        roleName = "一般使用者";
-        roleInfo = roleInfoService.findByName(roleName);
-        if (roleInfo == null) {
-            roleInfo = new RoleInfo();
-            roleInfo.setName(roleName);
-            roleInfo.setCreatedAt(LocalDateTime.now());
-            roleInfo.setUpdatedAt(LocalDateTime.now());
-            roleInfoService.save(roleInfo);
+        String[] roleCodes = {"0","1","2"};
+        RoleInfo roleInfo;
+        for(String roleCode :roleCodes){
+            roleInfo = roleInfoService.findByRoleCode(roleCode);
+            if (roleInfo == null) {
+                roleInfo = new RoleInfo();
+                if(roleCode.equals("0")){
+                    roleInfo.setName("管理者");
+                    roleInfo.setRoleName("ROLE_ADMIN");
+                    roleInfo.setRoleCode("0");
+                } else if (roleCode.equals("1")) {
+                    roleInfo.setName("主管");
+                    roleInfo.setRoleName("ROLE_MANAGER");
+                    roleInfo.setRoleCode("1");
+                } else if (roleCode.equals("2")) {
+                    roleInfo.setName("質檢員");
+                    roleInfo.setRoleName("ROLE_USER");
+                    roleInfo.setRoleCode("2");
+                }
+                roleInfo.setCreatedAt(LocalDateTime.now());
+                roleInfo.setUpdatedAt(LocalDateTime.now());
+                roleInfoService.save(roleInfo);
+            }
         }
 
         String account = "admin";
@@ -53,7 +57,6 @@ public class DataComponent {
         String name = "admin";
 
         UserInfo userInfo = userInfoRepository.findByName(name);
-
 
         if (userInfo == null) {
             userInfo = new UserInfo();
@@ -64,7 +67,7 @@ public class DataComponent {
             userInfo.setUpdatedAt(LocalDateTime.now());
             userInfo.setRoleInfos(new ArrayList<>());
 
-            roleInfo = roleInfoService.findByName(roleAdminName);
+            roleInfo = roleInfoService.findByRoleCode(RoleAdminCode);
             userInfo.getRoleInfos().add(roleInfo);
 
             userInfoRepository.save(userInfo);

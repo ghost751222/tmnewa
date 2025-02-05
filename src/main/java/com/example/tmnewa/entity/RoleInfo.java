@@ -22,6 +22,12 @@ public class RoleInfo {
     @Nationalized
     private String name;
 
+    @Nationalized
+    @Column(name = "role_name")
+    private String roleName;
+
+    private String roleCode;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 

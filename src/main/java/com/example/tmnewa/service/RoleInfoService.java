@@ -33,10 +33,14 @@ public class RoleInfoService {
         return roleInfoRepository.findByName(roleName);
     }
 
-    public boolean isSuperUser(String roleName) {
+    public RoleInfo findByRoleCode(String roleCode) {
+        return roleInfoRepository.findByRoleCode(roleCode);
+    }
+
+    public boolean isSuperUser(String roleCode) {
         boolean _isSuperUser = false;
-        RoleInfo roleInfo = this.findByName(roleName);
-        if (roleInfo != null && roleInfo.getName().equals(DataComponent.roleAdminName)) {
+        RoleInfo roleInfo = this.findByRoleCode(roleCode);
+        if (roleInfo != null && roleInfo.getRoleCode().equals(DataComponent.RoleAdminCode)) {
             _isSuperUser = true;
         }
         return _isSuperUser;

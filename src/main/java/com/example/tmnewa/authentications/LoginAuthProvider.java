@@ -13,10 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -58,11 +61,11 @@ public class LoginAuthProvider implements AuthenticationProvider {
             boolean isSuperUser = false;
             if (passwordEncoder.matches(rawPassword, password)) {
 
-
+                List<SimpleGrantedAuthority> authorities =  new ArrayList<>();;
                 for(RoleInfo roleInfo:userInfo.getRoleInfos()){
-                    if(roleInfoService.isSuperUser(roleInfo.getName())){
+                    authorities.add(new SimpleGrantedAuthority(roleInfo.getRoleName()));
+                    if(roleInfoService.isSuperUser(roleInfo.getRoleCode())){
                         isSuperUser =true;
-                        break;
                     }
                 }
 
@@ -70,7 +73,7 @@ public class LoginAuthProvider implements AuthenticationProvider {
                 httpSession.setAttribute("name",userInfo.getName());
                 httpSession.setAttribute("userInfo", JacksonUtils.writeValueAsString(userInfo));
                 return new UsernamePasswordAuthenticationToken
-                        (account, password, Collections.emptyList());
+                        (account, password, authorities);
             } else {
                 throw new RuntimeException("User not exist");
             }
