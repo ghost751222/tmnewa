@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableTransactionManagement
 @SpringBootApplication
-@PropertySource(value = "classpath:persistence.properties")
+@PropertySource(value = "classpath:persistence-${spring.database.type}.properties")
 @EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)
 public class Application extends SpringBootServletInitializer {
 
