@@ -17,8 +17,11 @@
 
 <body>
 <div layout:fragment="content" id="app">
-    <h1>Inspection Points</h1>
-    <button @click="click">Click</button>
+    <div style=" display: flex;align-items: center;justify-content: center;">
+        <h1>{{title}}</h1>
+        <button @click="click" class="btn btn-info">Click</button>
+    </div>
+
     <table class="table table-bordered">
         <thead class="thead-light">
         <tr>
@@ -129,7 +132,7 @@
                 showModal: false,
                 fields: [{ name: 'id', title: 'ID' }, { name: 'name', title: '名稱' }, { name: 'product', title: '產品名稱' }, { "name": "actions", "title": "Actions" }],
                 url: [[@{/qa}]],
-                sortOrder: [{ field: "Id", direction: "asc" }],
+                title:"",
                 inspectionPoints: [],
                 treeMaxDepth: 0,  // 新增 maxDepth 來記錄最大深度
             },
@@ -167,6 +170,7 @@
                 this.templateId =1
                 let url = `${this.url}/${this.jobId}?templateId=${this.templateId}`;
                 axios.get(url).then(res => {
+                    this.title = res.data[0].name
                     this.inspectionPoints = res.data[0].children;
                     // 計算最大深度
                     this.calculateMaxDepth(this.inspectionPoints);
