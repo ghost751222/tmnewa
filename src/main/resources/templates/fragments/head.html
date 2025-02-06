@@ -26,7 +26,7 @@
         const csrfName = "[[${_csrf.headerName}]]"
         const csrfToken = "[[${_csrf.token}]]"
         const contextPath = "[[@{/}]]";
-
+        const principalRoles=  Array.from(["[[${session.SPRING_SECURITY_CONTEXT.authentication.getAuthorities()}]]".replace("[","").replace("]","")])
 
         axios.defaults.headers.common[csrfName] = csrfToken;
 
@@ -61,6 +61,7 @@
           data:function(){
              return {
                  contextPath:contextPath,
+                 principalRoles:principalRoles,
              }
           },
           methods: {
@@ -99,6 +100,22 @@
                          location.href = baseUrl +  "login"
                    }
                 }
+          },
+          computed:{
+            isManager(){
+                if(this.principalRoles.includes("ROLE_MANAGER")){
+                    return true;
+                }else{
+                    return false;
+                }
+            },
+            isUser(){
+                if(this.principalRoles.includes("ROLE_USER")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
           }
         })
     </script>

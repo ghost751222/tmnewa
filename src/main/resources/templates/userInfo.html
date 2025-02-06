@@ -1,11 +1,11 @@
 <html layout:decorate="~{fragments/layout}" xmlns:layout="http://www.w3.org/1999/xhtml">
 
-<title layout:fragment="title">User</title>
+<title layout:fragment="title">用戶管理</title>
 
 <body>
 
 
-<div id="app" layout:fragment="content">
+<div id="app" layout:fragment="content" >
 
 
     <modal v-if="showModal" @close="showModal = false">
@@ -26,6 +26,7 @@
             </div>
 
             <div class="form-group">
+                <label for="name">角色</label>
                 <select class="form-control" multiple v-model="user.roleInfos" required>
                     <option v-for="roleInfo in roleInfos" :value="roleInfo.id">{{roleInfo.name}}</option>
                 </select>
@@ -44,8 +45,14 @@
 
     <form class="" @submit.prevent>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary mb-2" @click="query">{{queryValue}}</button>
-              <button type="submit" class="btn btn-primary mb-2" @click="add">{{addValue}}</button>
+              <button type="submit" class="btn btn-primary mb-2" @click="query">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  {{queryValue}}
+              </button>
+              <button type="submit" class="btn btn-primary mb-2" @click="add">
+                  <i class="fa-solid fa-user-plus"></i>
+                  {{addValue}}
+              </button>
         </div>
         <div class="form-group col-md-3">
             <label for="queryAccount">帳號</label>
@@ -207,7 +214,13 @@
                    })
                 }
             },mounted:function(){
-                    this.fields=[{name:'id',title:'ID'},{name:'account',title:'帳號'},{name:'name',title:'顯示名稱'},{ "name": "actions", "title": "Actions" },]
+                    this.fields=[{name:'id',title:'ID'},{name:'account',title:'帳號'},{name:'name',title:'顯示名稱'},
+                                  {name:'roleInfos',title:'角色',formatter(value){
+                                                                    g=[];value.forEach(v=>g.push(v.name))
+                                                                    return g
+                                                                }
+                                  }
+                                 ,{ "name": "actions", "title": "Actions" }]
 
                     axios.get([[@{/roleInfo}]]).then(res=>{
                          this.roleInfos = res.data;

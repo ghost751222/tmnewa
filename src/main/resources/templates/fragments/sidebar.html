@@ -12,13 +12,16 @@
     <li class="nav-item" th:if="${session.isAdmin}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#sysManager" aria-expanded="true"
            aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
+            <i class="fas fa-fw fa-folder"></i>
             <span>系統管理</span>
         </a>
         <div id="sysManager" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header"></h6>
-                <a class="collapse-item" th:href="@{/userInfo}" id="userInfo">用戶管理</a>
+                <a class="collapse-item" th:href="@{/userInfo}" id="userInfo">
+                    <i class="fa-solid fa-user"></i>
+                    <span>用戶管理</span>
+                </a>
             </div>
         </div>
     </li>
@@ -27,7 +30,7 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#qaManager" aria-expanded="true"
            aria-controls="collapseTwo">
-            <i class="fas fa-fw fa-cog"></i>
+            <i class="fas fa-fw fa-folder"></i>
             <span>質檢列表管理</span>
         </a>
         <div id="qaManager" class="collapse" aria-labelledby="headingTwo" data-parent="#qaManager">
@@ -69,14 +72,7 @@
     </div>
     <script type="text/javascript">
 
-      $("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
 
-          $("body").toggleClass("sidebar-toggled");
-          $(".sidebar").toggleClass("toggled");
-          if ($(".sidebar").hasClass("toggled")) {
-            $('.sidebar .collapse').collapse('hide');
-          };
-      });
       $("a[class='collapse-item']").click(function(e){
          sessionStorage.setItem("id", this.id);
       })

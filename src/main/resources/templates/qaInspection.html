@@ -102,10 +102,10 @@
                  <tr>
                     <td :rowSpan="getRowCount(point)" :colSpan="getColSpan(depth)">{{point.name}}</td>
                     <template v-if="point.children.length == 0">
-                        <td ><textarea v-model="point.notes"/></td>
-                        <td ><input type="number" min="0" v-model="point.score"/></td>
-                        <td ><textarea v-model="point.supervisorNotes"/></td>
-                        <td ><input type="number" min="0" v-model="point.supervisorScore"/></td>
+                        <td ><textarea v-model="point.notes" disabled class="user"/></td>
+                        <td ><input type="number" min="0" v-model="point.score" disabled class="user"/></td>
+                        <td ><textarea v-model="point.supervisorNotes" disabled class="manager"/></td>
+                        <td ><input type="number" min="0" v-model="point.supervisorScore" disabled class="manager"/></td>
                     </template>
                  </tr>
                   <tr is="inspection-point" v-if="point.children && point.children.length > 0"
@@ -174,14 +174,17 @@
                     this.inspectionPoints = res.data[0].children;
                     // 計算最大深度
                     this.calculateMaxDepth(this.inspectionPoints);
+
                 }).catch(err => {
                     if(err.response){
                         alert(err.response.data.message)
                     }else{
                         alert(err);
                     }
-
                 });
+            },updated(){
+                 if(this.isManager) document.querySelectorAll(".manager").forEach(item=> {console.log(item); item.disabled = false});
+                 if(this.isUser) document.querySelectorAll(".user").forEach(item=> item.disabled = false);
             }
         })
     </script>
