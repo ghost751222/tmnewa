@@ -1,10 +1,11 @@
-package com.example.tmnewa.Component;
+package com.example.tmnewa.component;
 
-import com.example.tmnewa.Respository.UserInfoRepository;
+import com.example.tmnewa.repository.UserInfoRepository;
 import com.example.tmnewa.entity.RoleInfo;
 import com.example.tmnewa.entity.UserInfo;
 import com.example.tmnewa.service.RoleInfoService;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Component
+@Slf4j
 public class DataComponent {
 
     public final static String RoleAdminCode = "0";
@@ -27,6 +29,7 @@ public class DataComponent {
 
     @PostConstruct
     public void AddAdminUser() {
+
         String[] roleCodes = {"0","1","2"};
         RoleInfo roleInfo;
         for(String roleCode :roleCodes){

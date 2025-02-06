@@ -1,7 +1,7 @@
 package com.example.tmnewa.authentications;
 
 
-import com.example.tmnewa.Respository.UserInfoRepository;
+import com.example.tmnewa.repository.UserInfoRepository;
 import com.example.tmnewa.entity.RoleInfo;
 import com.example.tmnewa.entity.UserInfo;
 import com.example.tmnewa.service.RoleInfoService;
@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Component

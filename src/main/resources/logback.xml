@@ -14,10 +14,13 @@
     <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOGS}/${PROJECT}.log</file>
 
+
+
         <!-- Time-Based Rolling Policy -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOGS}/${PROJECT}-%d{yyyy-MM-dd}.log</fileNamePattern>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS}/${PROJECT}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>30</maxHistory> <!-- Keep logs for the last 30 days -->
+            <maxFileSize>50MB</maxFileSize>
         </rollingPolicy>
 
         <encoder>

@@ -1,7 +1,7 @@
 package com.example.tmnewa.service;
 
-import com.example.tmnewa.Component.DataComponent;
-import com.example.tmnewa.Respository.RoleInfoRepository;
+import com.example.tmnewa.component.DataComponent;
+import com.example.tmnewa.repository.RoleInfoRepository;
 import com.example.tmnewa.entity.RoleInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

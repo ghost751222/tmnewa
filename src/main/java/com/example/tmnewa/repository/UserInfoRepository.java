@@ -1,4 +1,4 @@
-package com.example.tmnewa.Respository;
+package com.example.tmnewa.repository;
 
 import com.example.tmnewa.entity.UserInfo;
 import org.springframework.data.domain.Page;

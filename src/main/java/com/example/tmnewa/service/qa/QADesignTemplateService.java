@@ -1,8 +1,8 @@
 package com.example.tmnewa.service.qa;
 
 
-import com.example.tmnewa.Respository.qa.QADesignItemRepository;
-import com.example.tmnewa.Respository.qa.QADesignTemplateRepository;
+import com.example.tmnewa.repository.qa.QADesignItemRepository;
+import com.example.tmnewa.repository.qa.QADesignTemplateRepository;
 import com.example.tmnewa.entity.qa.QADesignItem;
 import com.example.tmnewa.entity.qa.QADesignTemplate;
 import com.example.tmnewa.service.LoginService;

@@ -1,6 +1,6 @@
 package com.example.tmnewa.service;
 
-import com.example.tmnewa.Respository.UserInfoRepository;
+import com.example.tmnewa.repository.UserInfoRepository;
 import com.example.tmnewa.entity.UserInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.logging.log4j.util.Strings;

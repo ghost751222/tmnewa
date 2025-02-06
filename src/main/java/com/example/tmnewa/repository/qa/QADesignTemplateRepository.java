@@ -1,4 +1,4 @@
-package com.example.tmnewa.Respository.qa;
+package com.example.tmnewa.repository.qa;
 
 import com.example.tmnewa.entity.qa.QADesignTemplate;
 import org.springframework.data.domain.Page;

@@ -1,7 +1,7 @@
 package com.example.tmnewa.service.qa;
 
 
-import com.example.tmnewa.Respository.qa.QAInspectionRepository;
+import com.example.tmnewa.repository.qa.QAInspectionRepository;
 import com.example.tmnewa.entity.qa.QADesignItem;
 import com.example.tmnewa.entity.qa.QAInspection;
 import com.example.tmnewa.service.LoginService;
