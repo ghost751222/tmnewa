@@ -19,7 +19,7 @@ public class CustomSSLSocketFactory extends SSLSocketFactory {
     public CustomSSLSocketFactory() {
         try {
             SSLContext ctx = SSLContext.getInstance("SSL");
-            ctx.init(null, new TrustManager[]{new DummyTrustmanager()}, new SecureRandom());
+            ctx.init(null, new TrustManager[]{new DummyTrustManager()}, new SecureRandom());
             socketFactory = ctx.getSocketFactory();
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
@@ -69,7 +69,7 @@ public class CustomSSLSocketFactory extends SSLSocketFactory {
     /**
      * 證書
      */
-    public static class DummyTrustmanager implements X509TrustManager {
+    public static class DummyTrustManager implements X509TrustManager {
         public void checkClientTrusted(X509Certificate[] cert, String string) {
         }
 
