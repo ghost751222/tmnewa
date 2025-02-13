@@ -32,7 +32,9 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-             http.headers((headers) ->
+             http
+                     .csrf(csrf->csrf.ignoringRequestMatchers("/login"))
+                     .headers((headers) ->
                              headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
                 .authorizeHttpRequests((requests) -> requests
