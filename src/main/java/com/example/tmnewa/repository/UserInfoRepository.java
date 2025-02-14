@@ -9,6 +9,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.example.tmnewa.vo.RequestQueryVo;
 
+import java.util.Optional;
+import java.util.Set;
+
 @Repository
 
 public interface UserInfoRepository extends JpaRepository<UserInfo, Long> {
@@ -19,5 +22,5 @@ public interface UserInfoRepository extends JpaRepository<UserInfo, Long> {
 
     UserInfo findByName(String name);
 
-    UserInfo findByAccount(String account);
+    Optional<UserInfo> findByAccount(String account);
 }

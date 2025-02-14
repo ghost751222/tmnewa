@@ -2,7 +2,6 @@ package com.example.tmnewa.config;
 
 import com.example.tmnewa.authentications.LoginAuthProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,8 +22,8 @@ import java.util.Collections;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    @Value("${tmnewa.cross.site.url}")
-    private String tmnewaCrossSiteUrl;
+    @Autowired
+    TWNEWAConfigProperties twnewaConfigProperties;
 
     @Autowired
     LoginAuthProvider loginAuthProvider;
@@ -40,46 +39,42 @@ public class WebSecurityConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        // 为 /authenticate 路径配置 CORS
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList(tmnewaCrossSiteUrl));
+        config.setAllowedOrigins(Collections.singletonList(twnewaConfigProperties.getCrossSiteUrl()));
         config.setAllowedMethods(Arrays.asList("GET", "POST"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/login", config);
         source.registerCorsConfiguration("/", config);
-
         return source;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
              http
-                     .csrf(csrf->csrf.ignoringRequestMatchers("/login"))
-                     .headers((headers) ->
+                .csrf(csrf->csrf.ignoringRequestMatchers("/login"))
+                .headers((headers) ->
                              headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/login", "/logout", "/css/**", "/js/**", "/webfonts/**").permitAll()
                         //.requestMatchers("/userInfo").hasAuthority("ROLE_ADMIN")
-
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
-
                         .defaultSuccessUrl("/", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login")
-
-                        .deleteCookies("JSESSIONID"))
+                        .deleteCookies("JSESSIONID")
+                )
                 .authenticationProvider(loginAuthProvider)
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?error=true")));
+                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?error=true"))
+                );
         return http.build();
     }
 }
