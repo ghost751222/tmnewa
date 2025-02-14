@@ -1,15 +1,13 @@
 package com.example.tmnewa.authentications;
 
 
-import com.example.tmnewa.repository.UserInfoRepository;
 import com.example.tmnewa.entity.RoleInfo;
 import com.example.tmnewa.entity.UserInfo;
+import com.example.tmnewa.repository.UserInfoRepository;
 import com.example.tmnewa.service.RoleInfoService;
 import com.example.tmnewa.utils.JacksonUtils;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.SneakyThrows;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -18,14 +16,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @Slf4j
-//@CrossOrigin(origins = "http://127.0.0.1:5500",allowCredentials = "true")
 public class LoginAuthProvider implements AuthenticationProvider {
 
     PasswordEncoder passwordEncoder;
@@ -35,8 +31,7 @@ public class LoginAuthProvider implements AuthenticationProvider {
     RoleInfoService roleInfoService;
 
     HttpSession httpSession;
-@Autowired
-HttpServletResponse response;
+
 
     @Autowired
     public LoginAuthProvider(PasswordEncoder encoder, UserInfoRepository userInfoRepository, RoleInfoService roleInfoService, HttpSession httpSession) {
@@ -65,18 +60,17 @@ HttpServletResponse response;
             boolean isSuperUser = false;
             if (passwordEncoder.matches(rawPassword, password)) {
 
-                List<SimpleGrantedAuthority> authorities =  new ArrayList<>();;
-                for(RoleInfo roleInfo:userInfo.getRoleInfos()){
+                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                ;
+                for (RoleInfo roleInfo : userInfo.getRoleInfos()) {
                     authorities.add(new SimpleGrantedAuthority(roleInfo.getRoleName()));
-                    if(roleInfoService.isSuperUser(roleInfo.getRoleCode())){
-                        isSuperUser =true;
+                    if (roleInfoService.isSuperUser(roleInfo.getRoleCode())) {
+                        isSuperUser = true;
                     }
                 }
-                response.addHeader("access-control-allow-origin","http://127.0.0.1:5500");
-                response.addHeader("Access-Control-Allow-Credentials","true");
 
-                httpSession.setAttribute("isAdmin",isSuperUser);
-                httpSession.setAttribute("name",userInfo.getName());
+                httpSession.setAttribute("isAdmin", isSuperUser);
+                httpSession.setAttribute("name", userInfo.getName());
                 httpSession.setAttribute("userInfo", JacksonUtils.writeValueAsString(userInfo));
 
                 return new UsernamePasswordAuthenticationToken
