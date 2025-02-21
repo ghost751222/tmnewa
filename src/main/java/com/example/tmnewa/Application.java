@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class Application extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
+		System.setProperty("com.sun.jndi.ldap.object.disableEndpointIdentification","true");
 		SpringApplication.run(Application.class, args);
 	}
 
