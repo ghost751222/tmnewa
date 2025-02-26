@@ -45,9 +45,6 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
         // 根據登錄方式處理重定向
         if (authentication.getPrincipal() instanceof OAuth2User auth2User) {
             Map<String, Object> attributes = auth2User.getAttributes();
-            attributes.forEach((k,v)->{
-                log.info(k);
-            });
             String account = attributes.get("preferred_username").toString();
             String name = attributes.get("name").toString();
             Optional<UserInfo> userInfoOptional = userInfoService.findByAccount(account);
