@@ -12,12 +12,13 @@ import org.springframework.stereotype.Service;
 import com.example.tmnewa.vo.RequestQueryVo;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class UserInfoService extends LoginService{
 
 
-    private final String defaultPassWord = "123456";
+
 
     UserInfoRepository userInfoRepository;
 
@@ -34,13 +35,13 @@ public class UserInfoService extends LoginService{
         return userInfoRepository.findByQueryParameter(requestQueryVo, pageRequest);
     }
 
-    private UserInfo save(UserInfo userInfo) {
+    public UserInfo save(UserInfo userInfo) {
         return userInfoRepository.save(userInfo);
     }
 
 
     public UserInfo addUserInfo(UserInfo userInfo) throws JsonProcessingException {
-        userInfo.setPassword(passwordEncoder.encode(defaultPassWord));
+        userInfo.setPassword(passwordEncoder.encode(DefaultPassWord));
         userInfo.setCreator(getLoginId());
         userInfo.setCreatedAt(LocalDateTime.now());
         userInfo.setUpdater(getLoginId());
@@ -50,7 +51,7 @@ public class UserInfoService extends LoginService{
 
     public UserInfo updateUserInfo(UserInfo userInfo) throws JsonProcessingException {
         if(Strings.isEmpty(userInfo.getPassword())){
-            userInfo.setPassword(passwordEncoder.encode(defaultPassWord));
+            userInfo.setPassword(passwordEncoder.encode(DefaultPassWord));
         }else{
             userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
         }
@@ -62,5 +63,9 @@ public class UserInfoService extends LoginService{
     public UserInfo deleteUserInfo(UserInfo userInfo) {
         userInfoRepository.delete(userInfo);
         return userInfo;
+    }
+
+    public Optional<UserInfo> findByAccount(String account){
+        return userInfoRepository.findByAccount(account);
     }
 }

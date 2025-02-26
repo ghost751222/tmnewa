@@ -1,6 +1,7 @@
 package com.example.tmnewa.config;
 
 import com.example.tmnewa.authentications.LoginAuthProvider;
+import com.example.tmnewa.authentications.LoginAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,8 @@ public class WebSecurityConfig {
     @Autowired
     LoginAuthProvider loginAuthProvider;
 
+    @Autowired
+    LoginAuthenticationSuccessHandler loginAuthenticationSuccessHandler;
 
     @Bean
     public AuthenticationManager authenticationManager(
@@ -46,7 +49,7 @@ public class WebSecurityConfig {
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList(twnewaConfigProperties.getCrossSiteUrl())  );
+        config.setAllowedOrigins(Collections.singletonList(twnewaConfigProperties.getCrossSiteUrl()));
         config.setAllowedMethods(Arrays.asList("GET", "POST"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
@@ -57,13 +60,13 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-             http
-                .csrf(csrf->csrf.ignoringRequestMatchers("/login","/azure/**"))
+        http
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/login/**"))
                 .headers((headers) ->
-                             headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                        headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/login", "/logout", "/css/**", "/js/**", "/webfonts/**","/azure/**").permitAll()
+                        .requestMatchers("/login/**", "/logout", "/css/**", "/js/**", "/webfonts/**", "/oauth2/authorization/azure").permitAll()
                         //.requestMatchers("/userInfo").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -81,14 +84,15 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?error=true"))
                 )
-//                     .oauth2Login((oauth2Login) -> oauth2Login
-//                             .userInfoEndpoint((userInfo) -> userInfo
-//                                     .userAuthoritiesMapper(grantedAuthoritiesMapper())
-//                             )
-//                     )
-                ;
+                .oauth2Login((oauth2Login) -> oauth2Login
+                        .userInfoEndpoint((userInfo) -> userInfo.userAuthoritiesMapper(grantedAuthoritiesMapper())
+                        ).successHandler(loginAuthenticationSuccessHandler)
+                )
+
+        ;
         return http.build();
     }
+
 
     private GrantedAuthoritiesMapper grantedAuthoritiesMapper() {
         return (authorities) -> {

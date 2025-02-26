@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoginService {
 
+
+    public final static String DefaultPassWord = "123456";
+
     @Autowired
     HttpSession httpSession;
-
 
     public UserInfo getUserInfo() throws JsonProcessingException {
         return  JacksonUtils.readValue((String)httpSession.getAttribute("userInfo"),UserInfo.class);
