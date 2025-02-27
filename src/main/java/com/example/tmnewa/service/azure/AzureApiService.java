@@ -69,7 +69,7 @@ public class AzureApiService {
             formData += "&code=" + code;
             formData += "&scope=profile openid email";
             formData += "&grant_type=authorization_code";
-            formData += "&redirect_uri=" + twnewaConfigProperties.getAzure_redirect_uri();
+            formData += "&redirect_uri=" + twnewaConfigProperties.getAzurePostLogoutRedirectUri();
             formData += "&client_secret=" + twnewaConfigProperties.getAzureClientSecret();
 
             HttpPost post = HttpClientUtils.getHttpPostMethod(url);

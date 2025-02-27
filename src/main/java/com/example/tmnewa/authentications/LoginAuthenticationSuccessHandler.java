@@ -77,7 +77,7 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
             request.getSession().setAttribute("isAdmin", isSuperUser);
             request.getSession().setAttribute("name", name);
             request.getSession().setAttribute("userInfo", JacksonUtils.writeValueAsString(userInfo));
-
+            request.getSession().setAttribute("loginType","oauth2Login");
 
             // 建立 UsernamePasswordAuthenticationToken，這是你需要返回的類型
             Authentication newAuthentication = new UsernamePasswordAuthenticationToken(
