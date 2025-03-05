@@ -64,7 +64,7 @@ public class WebSecurityConfig {
                         headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/login/**", "/logout", "/css/**", "/js/**", "/webfonts/**", "/oauth2/authorization/azure").permitAll()
+                        .requestMatchers("/common/login","/login/**", "/logout", "/css/**", "/js/**", "/webfonts/**", "/oauth2/authorization/azure").permitAll()
                         //.requestMatchers("/userInfo").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -75,7 +75,7 @@ public class WebSecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout")
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/common/login?logout")
                         .deleteCookies("JSESSIONID")
 //                        .addLogoutHandler((request, response, authentication) -> {
 //                            if ("oauth2Login".equals(request.getSession().getAttribute("loginType"))) {
