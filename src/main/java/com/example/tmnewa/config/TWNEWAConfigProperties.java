@@ -21,4 +21,8 @@ public class TWNEWAConfigProperties {
     private String adLdap;
     private String adBase;
 
+    private String firstLineUrl;
+    private String firstLineUserName;
+    private String firstLinePassword;
+
 }

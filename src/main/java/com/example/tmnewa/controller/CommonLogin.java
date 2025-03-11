@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class CommonLogin {
 
     @RequestMapping(value = {"/",""},method = RequestMethod.GET)
-    public String toString() {
+    public String commonLogin() {
         return "commonLogin";
     }
 }

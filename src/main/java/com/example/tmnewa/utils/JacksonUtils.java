@@ -1,6 +1,8 @@
 package com.example.tmnewa.utils;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +27,10 @@ public class JacksonUtils {
         return mapper.convertValue(map, classType);
     }
 
+    public static <T> T readValue(String content, TypeReference<T> valueTypeRef) throws JsonProcessingException, JsonMappingException {
+
+        return mapper.readValue(content, valueTypeRef);
+    }
 
     public static <T> T readValue(String content, Class<T> valueType) throws JsonProcessingException, JsonMappingException {
         return mapper.readValue(content, valueType);
@@ -33,4 +39,6 @@ public class JacksonUtils {
     public static String writeValueAsString(Object value) throws JsonProcessingException {
         return mapper.writeValueAsString(value);
     }
+
+
 }
