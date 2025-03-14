@@ -10,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,17 +28,17 @@ public class TbCallLogSchedule {
     @Autowired
     QATaskJobService qaTaskJobService;
 
-    @PostConstruct
+    //@PostConstruct
     public void transferTbCallLogToQaTaskJob() {
-        LocalDateTime start = LocalDateTime.now().minusYears(3);
-        LocalDateTime end = start.plusDays(60);
+        LocalDate start = LocalDate.now().minusYears(3);
+        LocalDate end = start.plusDays(60);
         transferTbCallLogToQaTaskJob(start, end);
     }
 
-
-    public void transferTbCallLogToQaTaskJob(LocalDateTime startTime, LocalDateTime endTime) {
-        log.info("transferTbCallLogToQaTaskJob start execute startTime= " + startTime + " endTime = " + endTime);
-        List<TbCallLog> tbCallLogs = tbCallLogService.findByStartTimeAndEndTime(startTime, endTime);
+    @Transactional
+    public void transferTbCallLogToQaTaskJob(LocalDate startDate, LocalDate endDate) {
+        log.info("transferTbCallLogToQaTaskJob start execute startTime= " + startDate + " endTime = " + endDate);
+        List<TbCallLog> tbCallLogs = tbCallLogService.findByStartTimeAndEndTime(startDate, endDate);
         List<QaTaskJob> qaTaskJobs = new ArrayList<>();
         for(TbCallLog tbCallLog :tbCallLogs){
             var qaTaskJob = new QaTaskJob();
@@ -48,6 +50,8 @@ public class TbCallLogSchedule {
             qaTaskJob.setCall_ext_no(tbCallLog.getF_ext_no());
             qaTaskJob.setCreator(0L);
             qaTaskJob.setCreatedAt(LocalDateTime.now());
+            qaTaskJob.setProduct_name("1");
+            qaTaskJob.setStatus("0");
             qaTaskJobs.add(qaTaskJob);
         }
         try{

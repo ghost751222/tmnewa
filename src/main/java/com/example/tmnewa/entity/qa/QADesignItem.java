@@ -22,7 +22,7 @@ public class QADesignItem {
     private String name;
 
     @Column(name = "score")
-    private Float score;
+    private int score;
 
 
     private Integer seq;

@@ -36,7 +36,10 @@ public class QAInspectionService extends LoginService {
                 qaInspection.setQaDesignItemId(qaDesignItem.getId());
                 qaInspection.setQaDesignItemParentId(qaDesignItem.getParentId());
                 qaInspection.setSeq(qaDesignItem.getSeq());
+                qaInspection.setDefaultScore(qaDesignItem.getScore());
                 qaInspection.setJobId(jobId);
+                qaInspection.setCreator(getLoginId());
+                qaInspection.setCreatedAt(LocalDateTime.now());
                 add(qaInspection);
             }
 

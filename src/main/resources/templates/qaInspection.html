@@ -18,31 +18,34 @@
 <body>
 <div layout:fragment="content" id="app">
     <div style=" display: flex;align-items: center;justify-content: center;">
-        <h1>{{title}}</h1>
-        <button @click="click" class="btn btn-info">Click</button>
+        <button @click="returnClick" class="btn btn-info">返回</button>
+        <button @click="saveClick" class="btn btn-primary">儲存</button>
     </div>
+        <div style=" display: flex;align-items: center;justify-content: center;">
+            <h1>{{title}}</h1>
+        </div>
+    <div style=" display: flex;align-items: center;justify-content: center;">
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                <tr>
+                    <th :colSpan="treeMaxDepth">評分項目</th>
+                    <th>配分</th>
+                    <th>評語</th>
+                    <th>初評分數</th>
+                    <th>評語</th>
+                    <th>複評分數</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr is="inspection-point" v-for="(point, index) in inspectionPoints" :key="point.id"
+                    :point="point" :tree-max-depth="treeMaxDepth" :is-root="true" :depth="1">
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
-    <table class="table table-bordered">
-        <thead class="thead-light">
-        <tr>
-            <th :colSpan="treeMaxDepth">評分項目</th>
-            <th>備註</th>
-            <th>分數</th>
-            <th>主管備註</th>
-            <th>主管評分</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr is="inspection-point"
-            v-for="(point, index) in inspectionPoints"
-            :key="point.id"
-            :point="point"
-            :tree-max-depth="treeMaxDepth"
-            :is-root="true"
-            :depth="1">
-        </tr>
-        </tbody>
-    </table>
+
+
 </div>
 </body>
 
@@ -58,11 +61,11 @@
                     type: Number,
                     required: true
                 },
-                isRoot:{
+                isRoot: {
                     type: Boolean,
                     required: true
                 },
-                treeMaxDepth:{
+                treeMaxDepth: {
                     type: Number,
                     required: true
                 }
@@ -77,14 +80,14 @@
                 },
                 // 計算 colspan
                 getColSpan(depth) {
-                    if(this.isRoot && this.isLeafNode){
+                    if (this.isRoot && this.isLeafNode) {
                         return this.maxDepth
                     }
-                    else if(this.isLeafNode){
+                    else if (this.isLeafNode) {
                         // 計算 colSpan，+1 保證跨越所有剩餘列
                         return this.maxDepth - depth + 1;
                     }
-                    else{
+                    else {
                         return 1
                     }
                 }
@@ -93,8 +96,8 @@
                 isLeafNode() {
                     return !this.point.children || this.point.children.length === 0;
                 },
-                maxDepth(){
-                   return this.treeMaxDepth;
+                maxDepth() {
+                    return this.treeMaxDepth;
                 }
             },
             template: `
@@ -102,6 +105,7 @@
                  <tr>
                     <td :rowSpan="getRowCount(point)" :colSpan="getColSpan(depth)">{{point.name}}</td>
                     <template v-if="point.children.length == 0">
+                        <td >{{point.defaultScore}}</td>
                         <td ><textarea v-model="point.notes" disabled class="user"/></td>
                         <td ><input type="number" min="0" v-model="point.score" disabled class="user"/></td>
                         <td ><textarea v-model="point.supervisorNotes" disabled class="manager"/></td>
@@ -122,52 +126,58 @@
              </fragment>
             `
         });
-        
+
         const vue = new Vue({
             el: '#app',
             data: {
-                templateId:null,
-                jobId:null,
-                action: null,
-                showModal: false,
-                fields: [{ name: 'id', title: 'ID' }, { name: 'name', title: '名稱' }, { name: 'product', title: '產品名稱' }, { "name": "actions", "title": "Actions" }],
-                url: [[@{/qa}]],
-                title:"",
-                inspectionPoints: [],
-                treeMaxDepth: 0,  // 新增 maxDepth 來記錄最大深度
-            },
+                templateId: null,
+                jobId: null,
+                url: [[@{/qaInspection}]],
+            title: "",
+            inspectionPoints: [],
+            treeMaxDepth: 0,  // 新增 maxDepth 來記錄最大深度
+        },
             methods: {
-                // 計算樹狀結構的最大深度
-                calculateMaxDepth(points, currentDepth = 1) {
-                    points.forEach(point => {
-                        if (point.children && point.children.length > 0) {
-                            this.calculateMaxDepth(point.children, currentDepth + 1);
-                        }
-                    });
-                    this.treeMaxDepth = Math.max(this.treeMaxDepth, currentDepth);
-                },
-                click(){
-                    const config = {
-                        url:this.url,
-                        method: "post",
-                        data:JSON.stringify(this.inspectionPoints),
-                        headers:{
-                            'Content-Type': 'application/json;charset=UTF-8'
-                        }
+            // 計算樹狀結構的最大深度
+            calculateMaxDepth(points, currentDepth = 1) {
+                points.forEach(point => {
+                    if (point.children && point.children.length > 0) {
+                        this.calculateMaxDepth(point.children, currentDepth + 1);
                     }
-
-                    this.$http(config).then(res=>{
-                        if(res.data == "ok"){
-                            location.reload()
-                        }
-                    }).catch(err=>{
-                        alert(err)
-                    })
-                }
+                });
+                this.treeMaxDepth = Math.max(this.treeMaxDepth, currentDepth);
             },
+            saveClick() {
+                const config = {
+                    url: this.url,
+                    method: "post",
+                    data: JSON.stringify(this.inspectionPoints),
+                    headers: {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                    }
+                }
+
+                this.$http(config).then(res => {
+                    if (res.data == "ok") {
+                        location.reload()
+                    }
+                }).catch(err => {
+                    alert(err)
+                })
+            },
+            returnClick() {
+                history.back();
+            }
+        },
             mounted: function () {
-                this.jobId =1
-                this.templateId =1
+
+                let paramsString = window.location.search;
+                let searchParams = new URLSearchParams(paramsString);
+                console.log(searchParams.toString())
+
+                this.jobId = searchParams.get("jobId");
+                this.templateId = searchParams.get("templateId")
+
                 let url = `${this.url}/${this.jobId}?templateId=${this.templateId}`;
                 axios.get(url).then(res => {
                     this.title = res.data[0].name
@@ -176,15 +186,15 @@
                     this.calculateMaxDepth(this.inspectionPoints);
 
                 }).catch(err => {
-                    if(err.response){
+                    if (err.response) {
                         alert(err.response.data.message)
-                    }else{
+                    } else {
                         alert(err);
                     }
                 });
-            },updated(){
-                 if(this.isManager) document.querySelectorAll(".manager").forEach(item=> {console.log(item); item.disabled = false});
-                 if(this.isUser) document.querySelectorAll(".user").forEach(item=> item.disabled = false);
+            }, updated(){
+            if(this.isManager) document.querySelectorAll(".manager").forEach(item => { console.log(item); item.disabled = false });
+        if (this.isUser) document.querySelectorAll(".user").forEach(item => item.disabled = false);
             }
         })
     </script>

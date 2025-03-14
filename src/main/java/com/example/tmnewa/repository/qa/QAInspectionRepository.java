@@ -9,8 +9,6 @@ import java.util.List;
 @Repository
 public interface QAInspectionRepository extends JpaRepository<QAInspection, Long> {
 
-
-
     Long countByJobId(Long jobId);
     List<QAInspection> findByJobIdAndQaDesignItemParentIdOrderBySeqDesc(Long jobId,Long qaDesignItemParentId);
 

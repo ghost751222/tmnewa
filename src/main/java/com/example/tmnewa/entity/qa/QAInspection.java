@@ -32,8 +32,11 @@ public class QAInspection {
     @Column(name = "job_id")
     private Long jobId;
 
-    @Column(name = "score")
-    private Float score;
+    @Column(name = "default_score")
+    private int defaultScore;
+
+    @Column(name = "score",updatable = false)
+    private int score;
 
     @Nationalized
     @Column(length = 8192)

@@ -49,6 +49,12 @@
 
 
             <div class="form-group">
+                <label for="inputNumber">配分</label>
+                <input type="number" class="form-control" id="inputNumber" min="0" v-model="qaDesignItem.score"/>
+            </div>
+
+
+            <div class="form-group">
                 <label for="inputNumber">顯示順序</label>
                 <input type="number" class="form-control" id="inputNumber" min="0" v-model="qaDesignItem.seq"/>
             </div>
@@ -181,12 +187,15 @@
                     parentId:null,
                     seq:null,
                     qaTemplateId:null,
+                    score:null,
                 },
                 itemSelected: null,
                 treeData: {},
                 action: null,
                 showModal: false,
-                fields: [{ name: 'id', title: 'ID' }, { name: 'name', title: '名稱' }, { name: 'seq', title: '順序' }, { "name": "actions", "title": "Actions" }],
+                fields: [{ name: 'id', title: 'ID' }, { name: 'name', title: '名稱' },
+                         { name: 'score', title :'配分'},
+                         { name: 'seq', title: '順序' }, { "name": "actions", "title": "Actions" }],
                 url: [[@{/qaDesignItem/data}]],
                 sortOrder: [{ field: "Id", direction: "asc" }],
 
@@ -211,6 +220,7 @@
                     this.qaDesignItem.name = "";
                     this.qaDesignItem.parentId = this.itemSelected.id;
                     this.qaDesignItem.seq = 1;
+                    this.qaDesignItem.score = 0;
                     this.openModal()
                 },
                 query() {

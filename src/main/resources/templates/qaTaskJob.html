@@ -17,175 +17,113 @@
 
 <body>
 <div layout:fragment="content" id="app">
-    <div style=" display: flex;align-items: center;justify-content: center;">
-        <h1>{{title}}</h1>
-        <button @click="click" class="btn btn-info">Click</button>
+    <div ref="mainDiv">
+
+
+        <form @submit.prevent="query">
+
+            <div class="form-row col-6">
+                <div class="form-group col-md-6">
+                    <label for="startDate">開始日期</label>
+                    <input type="date" class="form-control" id="startDate" v-model="startDate" required="required">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="endDate">結束日期</label>
+                    <input type="date" class="form-control" id="endDate" v-model="endDate" required="required">
+                </div>
+            </div>
+
+            <div class="form-row col-6">
+                <button type="submit" class="btn btn-primary mb-2">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    {{queryValue}}
+                </button>
+            </div>
+        </form>
+
+        <div class="pagination ui basic segment grid">
+            <vuetable-pagination-info ref="paginationInfo"></vuetable-pagination-info>
+
+            <vuetable-pagination ref="pagination"
+                                 @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
+        </div>
+
+        <vuetable ref="vuetable" :api-url="url" :load-on-start="false" :fields="fields" :per-page="perPage"
+                  :append-params="appendParams" :transform="transformData" @vuetable:load-success="loadSuccess"
+                  :query-params="{  page: 'pageIndex',perPage:'pageSize',sort:'sort'}" :reactive-api-url="false"
+                  track-by="call_id" data-path="data" pagination-path="pagination" :sort-order="sortOrder"
+                  @vuetable:pagination-data="onPaginationData">
+
+            <div slot="actions" slot-scope="props">
+
+                <button class="btn btn-primary btn-sm" @click="editRow(props.rowData)" title="edit">
+                    <i class="fas fa-edit">編輯</i>
+                </button>
+            </div>
+        </vuetable>
     </div>
 
-    <table class="table table-bordered">
-        <thead class="thead-light">
-        <tr>
-            <th :colSpan="treeMaxDepth">評分項目</th>
-            <th>備註</th>
-            <th>分數</th>
-            <th>主管備註</th>
-            <th>主管評分</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr is="inspection-point"
-            v-for="(point, index) in inspectionPoints"
-            :key="point.id"
-            :point="point"
-            :tree-max-depth="treeMaxDepth"
-            :is-root="true"
-            :depth="1">
-        </tr>
-        </tbody>
-    </table>
 </div>
 </body>
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        Vue.component("inspection-point", {
-            props: {
-                point: {
-                    type: Object,
-                    required: true
-                },
-                depth: {
-                    type: Number,
-                    required: true
-                },
-                isRoot:{
-                    type: Boolean,
-                    required: true
-                },
-                treeMaxDepth:{
-                    type: Number,
-                    required: true
-                }
-            },
-            methods: {
-                // 計算節點的 rowspan (行數)
-                getRowCount(point) {
-                    if (!point.children || point.children.length === 0) {
-                        return 1;
-                    }
-                    return point.children.reduce((sum, child) => sum + this.getRowCount(child), 1);
-                },
-                // 計算 colspan
-                getColSpan(depth) {
-                    if(this.isRoot && this.isLeafNode){
-                        return this.maxDepth
-                    }
-                    else if(this.isLeafNode){
-                        // 計算 colSpan，+1 保證跨越所有剩餘列
-                        return this.maxDepth - depth + 1;
-                    }
-                    else{
-                        return 1
-                    }
-                }
-            },
-            computed: {
-                isLeafNode() {
-                    return !this.point.children || this.point.children.length === 0;
-                },
-                maxDepth(){
-                   return this.treeMaxDepth;
-                }
-            },
-            template: `
-             <fragment>
-                 <tr>
-                    <td :rowSpan="getRowCount(point)" :colSpan="getColSpan(depth)">{{point.name}}</td>
-                    <template v-if="point.children.length == 0">
-                        <td ><textarea v-model="point.notes" disabled class="user"/></td>
-                        <td ><input type="number" min="0" v-model="point.score" disabled class="user"/></td>
-                        <td ><textarea v-model="point.supervisorNotes" disabled class="manager"/></td>
-                        <td ><input type="number" min="0" v-model="point.supervisorScore" disabled class="manager"/></td>
-                    </template>
-                 </tr>
-                  <tr is="inspection-point" v-if="point.children && point.children.length > 0"
-                            v-for="(child, index) in point.children"
-                            :key="child.id"
-                            :point="child"
-                            :is-root="false"
-                            :tree-max-depth="treeMaxDepth"
-                            :depth="depth + 1"
-                  >
-                 </tr>
 
-
-             </fragment>
-            `
-        });
-        
         const vue = new Vue({
             el: '#app',
             data: {
-                templateId:null,
-                jobId:null,
+                templateId: null,
+                jobId: null,
                 action: null,
                 showModal: false,
-                fields: [{ name: 'id', title: 'ID' }, { name: 'name', title: '名稱' }, { name: 'product', title: '產品名稱' }, { "name": "actions", "title": "Actions" }],
-                url: [[@{/qa}]],
-                title:"",
-                inspectionPoints: [],
-                treeMaxDepth: 0,  // 新增 maxDepth 來記錄最大深度
-            },
+                fields: [{ name: 'call_id', title: 'ID' }, { name: 'call_start_time', title: '開始時間' }, { name: 'call_stop_time', title: '結束時間' },
+                { name: 'call_agent_id', title: '專員ID' }, { name: 'call_ext_no', title: '分機' }, { name: 'qa_time', title: '質檢時間' },
+                 {name :'status' , title:'質檢狀態',formatter(value){
+                                                        let _status = "未質檢";
+                                                        if(value =="1") _status = '已質檢'
+                                                        return _status;
+                                                   }
+                 },
+                { name: 'product_name', title: '產品名稱' }, { "name": "actions", "title": "Actions" }
+                ],
+                sortOrder: [{ field: "call_id", direction: "asc" }],
+                baseUrl: [[@{/qaTaskJob}]],
+            url: null,
+            title: "",
+            queryValue: "查詢",
+            startDate: null,
+            endDate: null
+        },
             methods: {
-                // 計算樹狀結構的最大深度
-                calculateMaxDepth(points, currentDepth = 1) {
-                    points.forEach(point => {
-                        if (point.children && point.children.length > 0) {
-                            this.calculateMaxDepth(point.children, currentDepth + 1);
-                        }
-                    });
-                    this.treeMaxDepth = Math.max(this.treeMaxDepth, currentDepth);
-                },
-                click(){
-                    const config = {
-                        url:this.url,
-                        method: "post",
-                        data:JSON.stringify(this.inspectionPoints),
-                        headers:{
-                            'Content-Type': 'application/json;charset=UTF-8'
-                        }
-                    }
-
-                    this.$http(config).then(res=>{
-                        if(res.data == "ok"){
-                            location.reload()
-                        }
-                    }).catch(err=>{
-                        alert(err)
-                    })
-                }
-            },
-            mounted: function () {
-                this.jobId =1
-                this.templateId =1
-                let url = `${this.url}/${this.jobId}?templateId=${this.templateId}`;
-                axios.get(url).then(res => {
-                    this.title = res.data[0].name
-                    this.inspectionPoints = res.data[0].children;
-                    // 計算最大深度
-                    this.calculateMaxDepth(this.inspectionPoints);
-
-                }).catch(err => {
-                    if(err.response){
-                        alert(err.response.data.message)
-                    }else{
-                        alert(err);
-                    }
+            query() {
+                this.appendParams = {}
+                if (this.startDate) this.appendParams["startDate"] = this.startDate;
+                if (this.endDate) this.appendParams["endDate"] = this.endDate;
+                this.$nextTick(function () {
+                    this.$refs.vuetable.refresh()
                 });
-            },updated(){
-                 if(this.isManager) document.querySelectorAll(".manager").forEach(item=> {console.log(item); item.disabled = false});
-                 if(this.isUser) document.querySelectorAll(".user").forEach(item=> item.disabled = false);
+            },
+            editRow(rowData) {
+                console.log(rowData)
+                const params = new URLSearchParams();
+                params.append("jobId", rowData.id);
+                params.append("templateId", rowData.product_name);
+                //document.getElementById("iframe").src = "qaInspection?" + params.toString();
+                location.href = `qaInspection?` + params.toString();
             }
+        },
+            mounted: function () {
+                var d = new Date()
+                this.endDate = moment(d).format('YYYY-MM-DD')
+                d.setDate(d.getDate() - 1);
+                this.startDate = moment(d).format('YYYY-MM-DD')
+                this.startDate = "2022-04-19"
+                this.endDate = "2022-04-19"
+
+                this.url = this.baseUrl + "/data"
+                this.query();
+            }, updated(){
+        }
         })
     </script>
 </th:block>

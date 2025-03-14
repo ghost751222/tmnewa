@@ -66,14 +66,14 @@
           },
           methods: {
                 transformData :function(data){
-
+                    var page = data.page
                     var transformed = {}
-                    var pageIndex = data.number
-                    var total = data.totalElements
-                    var pageSize = data.size
+                    var pageIndex = page.number
+                    var total = page.totalElements
+                    var pageSize = page.size
                     var from = pageIndex * pageSize + 1
                     var to = (pageIndex +1 ) * pageSize
-                    var lastPage = data.totalPages
+                    var lastPage = page.totalPages
                     var currentPage = pageIndex +1
                     transformed.data = data.content
                     transformed.pagination = {

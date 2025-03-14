@@ -3,6 +3,9 @@ package com.example.tmnewa.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+
+import java.time.LocalDate;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class RequestQueryVo {
@@ -10,5 +13,7 @@ public class RequestQueryVo {
     private String sort;
     private int pageIndex;
     private int pageSize;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
 }
