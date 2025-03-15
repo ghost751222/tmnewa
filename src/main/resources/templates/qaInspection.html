@@ -159,6 +159,7 @@
 
                 this.$http(config).then(res => {
                     if (res.data == "ok") {
+                        alert('儲存資料成功')
                         location.reload()
                     }
                 }).catch(err => {

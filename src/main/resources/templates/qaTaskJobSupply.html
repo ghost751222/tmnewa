@@ -15,7 +15,7 @@
             <input type="date" class="form-control"  v-model="startTime"  required="required"/>
             <label>結束日期</label>
             <input type="date" class="form-control"  v-model="endTime"  required="required"/>
-            <input type="submit" class="btn btn-primary" value="確認"></input>
+            <input type="submit" class="btn btn-primary" value="確認" ref="confirm"></input>
         </div>
     </form>
 </div>
@@ -42,13 +42,15 @@
                             endTime:this.endTime
                         }
                     }
-
+                    this.$refs.confirm.disabled = true;
                     this.$http(config).then(res=>{
                         if(res.data == "ok"){
-                            location.reload()
+                            alert('資料補充成功')
                         }
                     }).catch(err=>{
                         alert(err)
+                    }).finally(()=>{
+                        this.$refs.confirm.disabled = false;
                     })
                 }
             },

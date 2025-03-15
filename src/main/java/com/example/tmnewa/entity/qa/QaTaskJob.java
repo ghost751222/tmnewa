@@ -1,7 +1,9 @@
 package com.example.tmnewa.entity.qa;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.Nationalized;
 
 import java.time.LocalDateTime;
@@ -16,17 +18,47 @@ public class QaTaskJob {
     private Long id;
 
     @Column(nullable = false)
+    @Comment("通話ID")
     private String  call_id;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(nullable = false)
+    @Comment("開始時間")
     private LocalDateTime call_start_time;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(nullable = false)
+    @Comment("結束時間")
     private LocalDateTime call_stop_time;
+
+    @Comment("來源")
+    private String call_type;
+
+    @Comment("專員ID")
     private String call_agent_id;
+
+    @Comment("客戶ID")
     private String call_customer_id;
+
+    @Comment("專員分機")
     private String call_ext_no;
+
+    @Comment("質檢時間")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime qa_time;
+
+    @Comment("服務原因")
+    private String service_reason;
+
+    @Comment("質檢分數總分")
+    @Column(name = "total_score")
+    private Integer totalScore;
+
+    @Comment("質檢狀態")
     @Column(nullable = false)
     private String status;
+
+    @Comment("險別")
     @Nationalized
     private String product_name;
     @Column(updatable = false)

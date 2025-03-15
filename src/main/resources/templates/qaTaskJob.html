@@ -4,7 +4,7 @@
     <title layout:fragment="title">質檢清單</title>
     <style layout:fragment="style">
         td {
-            text-align: center;
+            text-align: center !important;
             vertical-align: middle !important;
         }
 
@@ -76,15 +76,18 @@
                 jobId: null,
                 action: null,
                 showModal: false,
-                fields: [{ name: 'call_id', title: 'ID' }, { name: 'call_start_time', title: '開始時間' }, { name: 'call_stop_time', title: '結束時間' },
-                { name: 'call_agent_id', title: '專員ID' }, { name: 'call_ext_no', title: '分機' }, { name: 'qa_time', title: '質檢時間' },
-                 {name :'status' , title:'質檢狀態',formatter(value){
+                fields: [
+                         //{ name: 'call_id', title: 'ID' },
+                         { name: 'call_start_time', title: '開始時間' }, { name: 'call_stop_time', title: '結束時間' },
+                         { name: 'call_type', title: '來源' }, { name: 'product_name', title: '險別' },{ name: 'service_reason', title: '服務原因' },
+                         { name: 'call_agent_id', title: '專員ID' }, { name: 'call_ext_no', title: '分機' }, { name: 'qa_time', title: '質檢時間' },
+                         {name :'status' , title:'質檢狀態',formatter(value){
                                                         let _status = "未質檢";
                                                         if(value =="1") _status = '已質檢'
                                                         return _status;
                                                    }
-                 },
-                { name: 'product_name', title: '產品名稱' }, { "name": "actions", "title": "Actions" }
+                        },
+                        , { "name": "actions", "title": "Actions" }
                 ],
                 sortOrder: [{ field: "call_id", direction: "asc" }],
                 baseUrl: [[@{/qaTaskJob}]],
@@ -104,11 +107,11 @@
                 });
             },
             editRow(rowData) {
-                console.log(rowData)
+                let product_name = rowData.product_name;
+                product_name =1;
                 const params = new URLSearchParams();
                 params.append("jobId", rowData.id);
-                params.append("templateId", rowData.product_name);
-                //document.getElementById("iframe").src = "qaInspection?" + params.toString();
+                params.append("templateId", product_name);
                 location.href = `qaInspection?` + params.toString();
             }
         },

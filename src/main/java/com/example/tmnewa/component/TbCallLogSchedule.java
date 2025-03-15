@@ -37,7 +37,7 @@ public class TbCallLogSchedule {
 
     @Transactional
     public void transferTbCallLogToQaTaskJob(LocalDate startDate, LocalDate endDate) {
-        log.info("transferTbCallLogToQaTaskJob start execute startTime= " + startDate + " endTime = " + endDate);
+        log.info("transferTbCallLogToQaTaskJob start execute startTime= {} endTime = {}", startDate, endDate);
         List<TbCallLog> tbCallLogs = tbCallLogService.findByStartTimeAndEndTime(startDate, endDate);
         List<QaTaskJob> qaTaskJobs = new ArrayList<>();
         for(TbCallLog tbCallLog :tbCallLogs){
@@ -45,12 +45,13 @@ public class TbCallLogSchedule {
             qaTaskJob.setCall_id(tbCallLog.getF_call_id());
             qaTaskJob.setCall_start_time(tbCallLog.getF_start_time());
             qaTaskJob.setCall_stop_time(tbCallLog.getF_stop_time());
+            qaTaskJob.setCall_type(tbCallLog.getF_call_type());
             qaTaskJob.setCall_agent_id(tbCallLog.getF_agent_id());
             qaTaskJob.setCall_customer_id(tbCallLog.getF_customer_id());
             qaTaskJob.setCall_ext_no(tbCallLog.getF_ext_no());
             qaTaskJob.setCreator(0L);
             qaTaskJob.setCreatedAt(LocalDateTime.now());
-            qaTaskJob.setProduct_name("1");
+            qaTaskJob.setProduct_name(tbCallLog.getF_dn());
             qaTaskJob.setStatus("0");
             qaTaskJobs.add(qaTaskJob);
         }
