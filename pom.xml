@@ -140,7 +140,7 @@
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<configuration>
-					<url>http://10.12.0.68:8888/manager/text</url>
+					<url>http://10.12.0.68:8887/manager/text</url>
 					<server>TomcatServer</server>
 					<path>/tmnewa</path>
 					<username>tomcat</username>

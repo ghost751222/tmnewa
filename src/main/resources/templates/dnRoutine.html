@@ -30,7 +30,7 @@
 
 
         <div class="form-row col-3">
-            <label class="form-label">查詢每週某天:</label>
+            <label class="form-label">星期:</label>
             <select class="custom-select custom-select-sm form-control form-control-sm" v-model="dayOfWeek">
                 <option value="">不選擇</option>
                 <option value="MONDAY">星期一</option>
@@ -111,8 +111,8 @@
                             </div>
                         </div>
                         <div class="form-row col-6">
-                            <label class="form-label">每週某天 (可選):</label>
-                            <select class="form-select" id="dayOfWeek" v-model="dnRoutine.dayOfWeek">
+                            <label class="form-label">星期:</label>
+                            <select class="form-select"  v-model="dnRoutine.dayOfWeek">
                                 <option value="">不選擇</option>
                                 <option value="MONDAY">星期一</option>
                                 <option value="TUESDAY">星期二</option>
@@ -171,7 +171,7 @@
                 { name: 'startDate', title: '開始日期' }, { name: 'startTime', title: '開始時間' },
                 { name: 'endDate', title: '結束日期' }, { name: 'endTime', title: '結束日期' },
                 { name: 'dayOfWeek', title: '週期' }, { name: 'actions', title: 'Actions' }],
-                sortOrder: [{ field: "Id", direction: "asc" }],
+                sortOrder: [{ field: "start_date", direction: "desc" }],
                 baseUrl: [[@{/dnRoutine}]],
                 url: null,
                 method: null,
