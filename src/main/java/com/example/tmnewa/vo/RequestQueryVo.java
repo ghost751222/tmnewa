@@ -15,5 +15,7 @@ public class RequestQueryVo {
     private int pageSize;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String dn;
+    private String dayOfWeek;
 
 }

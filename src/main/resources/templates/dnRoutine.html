@@ -17,16 +17,15 @@
 
 
 
-            <div class="form-row col-3">
-                <div class="form-group col-md-6">
-                    <label for="startDate">查詢開始日期</label>
-                    <input type="date" id="startDate" class="form-control"
-                           v-model="startDate">
-                </div>
-                <div class="form-group col-md-6"><label for="endDate">查詢結束日期</label>
-                    <input type="date" id="endDate" class="form-control" v-model="endDate">
-                </div>
+        <div class="form-row col-3">
+            <div class="form-group col-md-6">
+                <label for="startDate">查詢開始日期</label>
+                <input type="date" id="startDate" class="form-control" v-model="startDate">
             </div>
+            <div class="form-group col-md-6"><label for="endDate">查詢結束日期</label>
+                <input type="date" id="endDate" class="form-control" v-model="endDate">
+            </div>
+        </div>
 
 
 
@@ -44,34 +43,36 @@
             </select>
         </div>
 
-
+        <div class="form-row col-3">
+            <label class="form-label">線路:</label>
+            <select class="custom-select custom-select-sm form-control form-control-sm" v-model="dn">
+                <option value="">不選擇</option>
+                <option value="1004">1004</option>
+                <option value="1005">1005</option>
+                <option value="1006">1006</option>
+            </select>
+        </div>
     </form>
 
     <div class="pagination ui basic segment grid">
         <vuetable-pagination-info ref="paginationInfo"></vuetable-pagination-info>
 
-        <vuetable-pagination ref="pagination"
-                             @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
+        <vuetable-pagination ref="pagination" @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
     </div>
 
     <vuetable ref="vuetable" :api-url="url" :load-on-start="false" :fields="fields" :per-page="perPage"
               :append-params="appendParams" :transform="transformData" @vuetable:load-success="loadSuccess"
-              :query-params="{  page: 'pageIndex',perPage:'pageSize',sort:'sort'}" :reactive-api-url="false"
-              track-by="id" data-path="data" pagination-path="pagination" :sort-order="sortOrder"
+              :query-params="{  page: 'pageIndex',perPage:'pageSize',sort:'sort'}" :reactive-api-url="false" track-by="id"
+              data-path="data" pagination-path="pagination" :sort-order="sortOrder"
               @vuetable:pagination-data="onPaginationData">
 
         <div slot="actions" slot-scope="props">
 
-            <button class="btn btn-primary btn-sm" @click="editRow(props.rowData)" title="edit">
-                <i class="fas fa-edit">編輯用戶資訊</i>
+            <button class="btn btn-primary btn-sm" @click="update(props.rowData)" title="edit">
+                <i class="fas fa-edit">編輯</i>
             </button>
-
-            <button class="btn btn-warning btn-sm"  title="RePassword" @click="rePassword($event,props.rowData)">
-                <i class="fa-solid fa-lock">更新用戶密碼</i>
-            </button>
-
             <button class="btn btn-danger btn-sm" @click="deleteRow(props.rowData)" title="delete">
-                <i class="fa fa-trash">刪除用戶</i>
+                <i class="fa fa-trash">刪除</i>
             </button>
         </div>
     </vuetable>
@@ -122,8 +123,19 @@
                                 <option value="SUNDAY">星期日</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">新增</button>
-                        <button type="button" class="btn btn-primary" @click="showModal = false">關閉</button>
+                        <div class="form-row col-6">
+                            <label class="form-label">線路:</label>
+                            <select class="custom-select custom-select-sm form-control form-control-sm"
+                                    v-model="dnRoutine.dn" required="required">
+                                <option value="">不選擇</option>
+                                <option value="1004">1004</option>
+                                <option value="1005">1005</option>
+                                <option value="1006">1006</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">儲存</button>
+                        <button type="button" class="btn btn-info" @click="showModal = false">關閉</button>
                     </form>
                 </div>
             </div>
@@ -142,64 +154,119 @@
             el: '#app',
             data: {
                 dnRoutine: {
+                    id: null,
                     startDate: null,
                     endDate: null,
                     startTime: null,
                     endTime: null,
                     dayOfWeek: null,
+                    dn: null
                 },
-                startDate:null,
-                endDate:null,
+                startDate: null,
+                endDate: null,
                 dayOfWeek: null,
+                dn: null,
                 showModal: false,
-                fields:[],
-                sortOrder : [{field:"Id",direction:"asc"}],
-                url: [[@{/dnRoutine}]],
-            title: "質檢資料補充",
-        },
+                fields: [{ name: 'id', title: 'ID' }, { name: 'dn', title: '線路' },
+                { name: 'startDate', title: '開始日期' }, { name: 'startTime', title: '開始時間' },
+                { name: 'endDate', title: '結束日期' }, { name: 'endTime', title: '結束日期' },
+                { name: 'dayOfWeek', title: '週期' }, { name: 'actions', title: 'Actions' }],
+                sortOrder: [{ field: "Id", direction: "asc" }],
+                baseUrl: [[@{/dnRoutine}]],
+                url: null,
+                method: null,
+                title: "質檢資料補充",
+            },
             methods: {
-            click() {
-                const config = {
-                    url: this.url,
-                    method: "get",
-                    params: {
-                        startTime: this.startTime,
-                        endTime: this.endTime
+                add() {
+                    this.showModal = true;
+                    this.method = 'post'
+                    for (let value of dnRoutine) {
+                        value = ""
                     }
-                }
-                this.$refs.confirm.disabled = true;
-                this.$http(config).then(res => {
-                    if (res.data == "ok") {
-                        alert('資料補充成功')
+                },
+                update(rowData) {
+
+                    this.showModal = true;
+                    this.method = 'put'
+                    this.dnRoutine.id = rowData.id;
+                    this.dnRoutine.startDate = rowData.startDate;
+                    this.dnRoutine.endDate = rowData.endDate;
+                    this.dnRoutine.startTime = rowData.startTime;
+                    this.dnRoutine.endTime = rowData.endTime;
+                    this.dnRoutine.dn = rowData.dn;
+                    this.dnRoutine.dayOfWeek = rowData.dayOfWeek;
+                },
+                deleteRow(rowData) {
+                    this.method = "delete"
+                    this.dnRoutine.id = rowData.id;
+                    this.dnRoutine.startDate = rowData.startDate;
+                    this.dnRoutine.endDate = rowData.endDate;
+                    this.dnRoutine.dayOfWeek = rowData.dayOfWeek;
+                    this.save()
+                },
+                save() {
+                    let _dnRoutine = this.dnRoutine;
+
+                    if ( (_dnRoutine.startDate && !_dnRoutine.endDate) || (!_dnRoutine.startDate && _dnRoutine.endDate) ) {
+                        alert('請輸入開始或結束日期')
+                        return
                     }
-                }).catch(err => {
-                    alert(err)
-                }).finally(() => {
-                    this.$refs.confirm.disabled = false;
-                })
-            },
-            add() {
-                this.showModal = true;
-            },
-            query(){
-                    this.appendParams= {}
+
+                    if (_dnRoutine.startDate && _dnRoutine.endDate && _dnRoutine.dayOfWeek) {
+                        alert('請擇一選擇日期或是週期')
+                        return
+                    }
+
+                    if (!_dnRoutine.startDate && !_dnRoutine.endDate && !_dnRoutine.dayOfWeek) {
+                        alert('請選擇日期或是週期')
+                        return
+                    }
+
+                    const config = {
+                        url: this.baseUrl,
+                        data: JSON.stringify(_dnRoutine),
+                        method: this.method,
+                        headers: {
+                            'Content-Type': 'application/json;charset=UTF-8'
+                        }
+                    }
+                    this.$http(config).then((res) => {
+
+                        if (res.data.statusCode == 200) {
+                            vue.showModal = false;
+                            alert(res.data.message)
+                            this.query()
+                        } else {
+                            alert(res.data.message)
+                        }
+                    }).catch(err => {
+
+                        if (err == "Error: Network Error") {
+                            location.reload();
+                        } else {
+                            alert('System Error');
+                            console.log(err)
+                        }
+                    })
+                },
+                query() {
+                    this.appendParams = {}
                     this.appendParams["startDate"] = this.startDate;
                     this.appendParams["endDate"] = this.endDate;
-                    if(this.dayOfWeek) this.appendParams["dayOfWeek"] = this.dayOfWeek;
-                    this.$nextTick(function(){
+                    if (this.dayOfWeek) this.appendParams["dayOfWeek"] = this.dayOfWeek;
+                    this.$nextTick(function () {
                         this.$refs.vuetable.refresh()
                     });
-            }
-        },
+                }
+            },
             mounted: function () {
-                var d = new Date()
-                this.endDate = moment(d).format('YYYY-MM-DD')
-                this.startDate = moment(d).format('YYYY-MM-DD')
+                this.url = `${this.baseUrl}/data`;
+                this.query();
 
+            }, updated() {
 
-            }, updated(){
-
-        }
+            }
         })
     </script>
 </th:block>
