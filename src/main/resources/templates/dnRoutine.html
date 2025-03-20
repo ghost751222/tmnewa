@@ -10,12 +10,10 @@
 
     <form class="" @submit.prevent>
         <div class="form-group">
-            <button class="btn btn-success" @click="query"><i class="fa-solid fa-magnifying-glass">查詢</i></button>
+            <button class="btn btn-info" @click="query"><i class="fa-solid fa-magnifying-glass">查詢</i></button>
             <button class="btn btn-primary" @click="add"><i class="fa-solid fa-circle-plus">新增</i>
             </button>
         </div>
-
-
 
         <div class="form-row col-3">
             <div class="form-group col-md-6">
@@ -30,26 +28,28 @@
 
 
         <div class="form-row col-3">
-            <label class="form-label">星期:</label>
-            <select class="custom-select custom-select-sm form-control form-control-sm" v-model="dayOfWeek">
-                <option value="">不選擇</option>
-                <option value="MONDAY">星期一</option>
-                <option value="TUESDAY">星期二</option>
-                <option value="WEDNESDAY">星期三</option>
-                <option value="THURSDAY">星期四</option>
-                <option value="FRIDAY">星期五</option>
-                <option value="SATURDAY">星期六</option>
-                <option value="SUNDAY">星期日</option>
-            </select>
+            <div class="form-group col-md-6">
+                <label class="form-label">星期:</label>
+                <select class="custom-select custom-select-sm form-control form-control-sm" v-model="dayOfWeek">
+                    <option value="">不選擇</option>
+                    <option v-for=" h in dayOfWeeks" :value="h.value">{{h.name}}</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label class="form-label">線路:</label>
+                <select class="custom-select custom-select-sm form-control form-control-sm" v-model="dn">
+                    <option value="">不選擇</option>
+                    <option v-for=" h in dnProducts" :value="h.value">{{h.name}}</option>
+                </select>
+            </div>
         </div>
 
         <div class="form-row col-3">
-            <label class="form-label">線路:</label>
-            <select class="custom-select custom-select-sm form-control form-control-sm" v-model="dn">
+            <label class="form-label">假期類別:</label>
+            <select class="custom-select custom-select-sm form-control form-control-sm" v-model="holidayServiceTypeId">
                 <option value="">不選擇</option>
-                <option value="1004">1004</option>
-                <option value="1005">1005</option>
-                <option value="1006">1006</option>
+                <option v-for=" h in holidayServiceTypes" :value="h.id">{{h.name}}</option>
             </select>
         </div>
     </form>
@@ -112,28 +112,29 @@
                         </div>
                         <div class="form-row col-6">
                             <label class="form-label">星期:</label>
-                            <select class="form-select"  v-model="dnRoutine.dayOfWeek">
+                            <select class="form-control form-control-sm"  v-model="dnRoutine.dayOfWeek">
                                 <option value="">不選擇</option>
-                                <option value="MONDAY">星期一</option>
-                                <option value="TUESDAY">星期二</option>
-                                <option value="WEDNESDAY">星期三</option>
-                                <option value="THURSDAY">星期四</option>
-                                <option value="FRIDAY">星期五</option>
-                                <option value="SATURDAY">星期六</option>
-                                <option value="SUNDAY">星期日</option>
+                                <option v-for=" h in dayOfWeeks" :value="h.value">{{h.name}}</option>
                             </select>
                         </div>
                         <div class="form-row col-6">
                             <label class="form-label">線路:</label>
                             <select class="custom-select custom-select-sm form-control form-control-sm"
-                                    v-model="dnRoutine.dn" required="required">
+                                    v-model="dnRoutine.dn" @change="dnChange">
                                 <option value="">不選擇</option>
-                                <option value="1004">1004</option>
-                                <option value="1005">1005</option>
-                                <option value="1006">1006</option>
+                                <option v-for=" h in dnProducts" :value="h.value">{{h.name}}</option>
                             </select>
                         </div>
 
+                        <div class="form-row col-6">
+                            <label class="form-label">假期類別:</label>
+                            <select class="form-control form-control-sm"  v-model="dnRoutine.holidayServiceTypeId" required="required"  @change="dnChange">
+                                <option value="">不選擇</option>
+                                <option v-for=" h in holidayServiceTypes" :value="h.id">{{h.name}}</option>
+                            </select>
+                        </div>
+
+                        <hr/>
                         <button type="submit" class="btn btn-primary">儲存</button>
                         <button type="button" class="btn btn-info" @click="showModal = false">關閉</button>
                     </form>
@@ -159,30 +160,43 @@
                     endDate: null,
                     startTime: null,
                     endTime: null,
-                    dayOfWeek: null,
-                    dn: null
+                    dayOfWeek: "",
+                    dn: "",
+                    holidayServiceTypeId:""
                 },
-                startDate: null,
-                endDate: null,
-                dayOfWeek: null,
-                dn: null,
+                startDate: "",
+                endDate: "",
+                dayOfWeek: "",
+                dn: "",
+                holidayServiceTypeId:"",
                 showModal: false,
-                fields: [{ name: 'id', title: 'ID' }, { name: 'dn', title: '線路' },
-                { name: 'startDate', title: '開始日期' }, { name: 'startTime', title: '開始時間' },
-                { name: 'endDate', title: '結束日期' }, { name: 'endTime', title: '結束日期' },
-                { name: 'dayOfWeek', title: '週期' }, { name: 'actions', title: 'Actions' }],
+                fields: [{ name: 'id', title: 'ID' ,width: '5%' }, { name: 'dn', title: '線路' ,width: '5%' },
+                { name: 'startDate', title: '開始日期' ,width: '10%'}, { name: 'startTime', title: '開始時間' },
+                { name: 'endDate', title: '結束日期' ,width: '10%'}, { name: 'endTime', title: '結束日期' },
+                { name: 'dayOfWeek', title: '週期' ,formatter(value){
+                           if(!value) return value;
+                           return vue.dayOfWeeks.find(h=>h.value==value).name
+                         }
+                },
+                { name: 'holidayServiceTypeId', title: '假期類別',width: '20%',formatter(value){
+                        return vue.holidayServiceTypes.find(h=>h.id==value).name
+                        }
+                },
+                { name: 'actions', title: 'Actions' }],
                 sortOrder: [{ field: "start_date", direction: "desc" }],
                 baseUrl: [[@{/dnRoutine}]],
                 url: null,
+                holidayServiceTypes:[],
+                dayOfWeeks:[],
+                dnProducts:[],
                 method: null,
-                title: "質檢資料補充",
             },
             methods: {
                 add() {
                     this.showModal = true;
                     this.method = 'post'
-                    for (let value of dnRoutine) {
-                        value = ""
+                    for (let value in this.dnRoutine) {
+                        this.dnRoutine[value] = ""
                     }
                 },
                 update(rowData) {
@@ -196,6 +210,7 @@
                     this.dnRoutine.endTime = rowData.endTime;
                     this.dnRoutine.dn = rowData.dn;
                     this.dnRoutine.dayOfWeek = rowData.dayOfWeek;
+                    this.dnRoutine.holidayServiceTypeId = rowData.holidayServiceTypeId;
                 },
                 deleteRow(rowData) {
                     this.method = "delete"
@@ -222,6 +237,8 @@
                         alert('請選擇日期或是週期')
                         return
                     }
+
+                    if(!_dnRoutine.dayOfWeek) _dnRoutine.dayOfWeek=null
 
                     const config = {
                         url: this.baseUrl,
@@ -255,12 +272,44 @@
                     this.appendParams["startDate"] = this.startDate;
                     this.appendParams["endDate"] = this.endDate;
                     if (this.dayOfWeek) this.appendParams["dayOfWeek"] = this.dayOfWeek;
+                    if (this.holidayServiceTypeId) this.appendParams["holidayServiceTypeId"] = this.holidayServiceTypeId;
                     this.$nextTick(function () {
                         this.$refs.vuetable.refresh()
                     });
+                },
+                dnChange(){
+                    console.log(this.dnRoutine.holidayServiceTypeId)
+                    if(this.dnRoutine.holidayServiceTypeId == "11"){
+                        this.dnRoutine.dn=""
+                    }
+                },
+                getHolidayServiceTypes(){
+                    let _url  = [[@{/holidayServiceType}]]
+                    axios.get(_url)
+                        .then(res=>{
+                            this.holidayServiceTypes = res.data;
+                         })
+                        .catch(err=>{
+                               alert(err)
+                         })
+                },
+                getDNProducts(){
+                    let _url  = [[@{/dnProduct}]]
+                    axios.get(_url)
+                        .then(res=>{
+                           this.dnProducts = res.data.map(d=> ( {value:d.dn,name:d.dn  })  );
+                         })
+                        .catch(err=>{
+                               alert(err)
+                    })
                 }
             },
             mounted: function () {
+                this.getHolidayServiceTypes();
+                this.getDNProducts();
+                this.dayOfWeeks = [ {value :"MONDAY",name:"星期一"},{value :"TUESDAY",name:"星期二"},{value :"WEDNESDAY",name:"星期三"}
+                                    ,{value :"THURSDAY",name:"星期四"},{value :"FRIDAY",name:"星期五"},{value :"SATURDAY",name:"星期六"}
+                                    ,{value :"SUNDAY",name:"星期日"} ]
                 this.url = `${this.baseUrl}/data`;
                 this.query();
 

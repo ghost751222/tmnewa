@@ -19,7 +19,8 @@ public interface DNRoutineRepository extends JpaRepository<DNRoutine, String> {
             " and ( start_date >= date(:#{#requestQueryVo.startDate}) || :#{#requestQueryVo.startDate} is null )" +
             " and ( end_date <= date(:#{#requestQueryVo.endDate})     || :#{#requestQueryVo.endDate} is null  )" +
             " and (dn = :#{#requestQueryVo.dn} || :#{#requestQueryVo.dn} is null)" +
-            " and (day_of_week = :#{#requestQueryVo.dayOfWeek} || :#{#requestQueryVo.dayOfWeek} is null)",
+            " and (day_of_week = :#{#requestQueryVo.dayOfWeek} || :#{#requestQueryVo.dayOfWeek} is null)" +
+            " and (holiday_service_type_id = :#{#requestQueryVo.holidayServiceTypeId} || :#{#requestQueryVo.holidayServiceTypeId} is null)" ,
             nativeQuery = true)
     Page<DNRoutine> findByQueryParameter(@Param("requestQueryVo") RequestQueryVo requestQueryVo, Pageable pageable);
 

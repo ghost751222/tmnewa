@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
-@Table(name = "dn_routine")
+@Table(name = "dn_routine",uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"start_date", "start_time","end_date", "end_time","day_of_week", "dn"})
+})
 @Entity
 public class DNRoutine {
 
@@ -37,6 +39,9 @@ public class DNRoutine {
 
     @Column(name = "dn",nullable = false)
     private String dn;
+
+    @Column(name = "holiday_service_type_id")
+    private int holidayServiceTypeId;
 
     @Column(updatable = false)
     private Long creator;
