@@ -64,7 +64,7 @@ public class WebSecurityConfig {
                         headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/common/login","/login/**", "/logout", "/css/**", "/js/**", "/webfonts/**", "/oauth2/authorization/azure").permitAll()
+                        .requestMatchers("/common/login","/login/**", "/logout","/api/cti/**", "/css/**", "/js/**", "/webfonts/**", "/oauth2/authorization/azure").permitAll()
                         //.requestMatchers("/userInfo").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
