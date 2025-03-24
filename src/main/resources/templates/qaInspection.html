@@ -156,14 +156,14 @@
                 })
             },
             returnClick() {
-                history.back();
+                location.href=[[@{/qaTaskJob}]]
             }
         },
             mounted: function () {
 
                 let paramsString = window.location.search;
                 let searchParams = new URLSearchParams(paramsString);
-                console.log(searchParams.toString())
+
 
                 this.jobId = searchParams.get("jobId");
                 this.templateId = searchParams.get("templateId")
@@ -183,8 +183,8 @@
                     }
                 });
             }, updated(){
-            if(this.isManager) document.querySelectorAll(".manager").forEach(item => { console.log(item); item.disabled = false });
-        if (this.isUser) document.querySelectorAll(".user").forEach(item => item.disabled = false);
+                    if(this.isManager) document.querySelectorAll(".manager").forEach(item => { console.log(item); item.disabled = false });
+                    if (this.isUser) document.querySelectorAll(".user").forEach(item => item.disabled = false);
             }
         })
     </script>

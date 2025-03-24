@@ -20,8 +20,8 @@
 
 
             <div class="form-group">
-                <label for="name">產品名稱</label>
-                <input type="text" class="form-control" id="name" placeholder="Enter Name" required
+                <label for="name">險別</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter Name"
                        v-model="qaDesignTemplate.product"/>
             </div>
 
@@ -96,7 +96,7 @@
              },
              action:null,
              showModal: false,
-             fields:[{name:'id',title:'ID'},{name:'name',title:'名稱'},{name:'product',title:'產品名稱'},{ "name": "actions", "title": "Actions" }],
+             fields:[{name:'id',title:'ID'},{name:'name',title:'名稱'},{name:'product',title:'險別'},{ "name": "actions", "title": "Actions" }],
              url:[[@{/qaDesignTemplate/data}]],
              sortOrder : [{field:"Id",direction:"asc"}],
              addValue:"新增質檢模板",

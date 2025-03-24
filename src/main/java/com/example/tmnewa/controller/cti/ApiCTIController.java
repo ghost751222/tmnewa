@@ -1,6 +1,9 @@
 package com.example.tmnewa.controller.cti;
 
+import com.example.tmnewa.entity.DNRoutine;
+import com.example.tmnewa.entity.HolidayServiceType;
 import com.example.tmnewa.service.DNRoutineService;
+import com.example.tmnewa.service.HolidayServiceTypeService;
 import com.example.tmnewa.utils.IDValidatorUtils;
 import com.example.tmnewa.utils.ToolUtils;
 import com.example.tmnewa.vo.cti.CTIResponseVo;
@@ -20,8 +23,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,13 +36,16 @@ import java.util.Map;
 public class ApiCTIController {
 
 
-//    https://localhost:8888/tmnewa/api/cti/IdResult?ID=123456789
+    //    https://localhost:8888/tmnewa/api/cti/IdResult?ID=123456789
 //    https://localhost:8888/tmnewa/api/cti/IdCheckResult?ID=123456789
 //
 //    https://localhost:8888/tmnewa/api/cti/SMS?Ani=0987654321&Service=366001&Phone=0988809097
 //    https://localhost:8888/tmnewa/api/cti/Holiday?Service=6001
     @Autowired
     DNRoutineService dnRoutineService;
+
+    @Autowired
+    HolidayServiceTypeService holidayServiceTypeService;
 
     @Value("${tmnewa.smsIp:smsb2c.mitake.com.tw}")
     String smsIp;
@@ -82,9 +91,26 @@ public class ApiCTIController {
         ctiResponseVo.setRet(-1);
         try {
             LocalDateTime localDateTime = LocalDateTime.now();
+            LocalDate localDate = localDateTime.toLocalDate();
             LocalTime localTime = localDateTime.toLocalTime();
-            String dayOfWeek = localDateTime.getDayOfWeek().name();
-            log.info("{}  ,{},{}", localDateTime, localTime,dayOfWeek);
+            DayOfWeek dayOfWeek = localDateTime.getDayOfWeek();
+            log.info("Holiday Api query {},{}", localDateTime, dayOfWeek.name());
+            var holidayServiceTypes = holidayServiceTypeService.findAllByValue(service);
+            var holidayServiceTypesIds = holidayServiceTypes.stream().map(HolidayServiceType::getId).toList();
+
+            List<DNRoutine> dnRoutines = dnRoutineService.findByApiQuery(localDate, localTime, dayOfWeek);
+            String v_Type = Strings.EMPTY;
+            String v_Peak = Strings.EMPTY;
+            for (DNRoutine d : dnRoutines) {
+                if (holidayServiceTypesIds.contains(d.getHolidayServiceTypeId())) {
+                    ctiResponseVo.setRet(0);
+                    v_Type = "101";
+                    v_Peak = "200";
+                    break;
+                }
+            }
+            ctiResponseVo.addVar("v_Type", v_Type);
+            ctiResponseVo.addVar("v_Peak", v_Peak);
         } catch (Exception e) {
             log.error(String.valueOf(e));
         }

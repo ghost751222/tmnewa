@@ -10,9 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -46,4 +51,7 @@ public class DNRoutineService extends LoginService {
         return dnRoutine;
     }
 
+    public List<DNRoutine> findByApiQuery(LocalDate localDate, LocalTime localTime, DayOfWeek dayOfWeek){
+        return dnRoutineRepository.findByApiQuery(localDate,localTime,dayOfWeek.name().toUpperCase());
+    }
 }

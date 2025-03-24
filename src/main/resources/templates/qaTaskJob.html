@@ -79,7 +79,18 @@
                 fields: [
                          //{ name: 'call_id', title: 'ID' },
                          { name: 'call_start_time', title: '開始時間' }, { name: 'call_stop_time', title: '結束時間' },
-                         { name: 'call_type', title: '來源' }, { name: 'product_name', title: '險別' },{ name: 'service_reason', title: '服務原因' },
+                         { name: 'call_type', title: '來源',formatter(value){
+                                                                    if(value=="0" || value =="2"){
+                                                                        return "INBOUND";
+                                                                    }
+                                                                    else if (value=="1" || value =="3"){
+                                                                        return "OUTBOUND";
+                                                                    }
+                                                                    else{
+                                                                       return value
+                                                                    }
+                                                            } },
+                         { name: 'product_name', title: '險別' },{ name: 'service_reason', title: '服務原因' },
                          { name: 'call_agent_id', title: '專員ID' }, { name: 'call_ext_no', title: '分機' }, { name: 'qa_time', title: '質檢時間' },
                          {name :'status' , title:'質檢狀態',formatter(value){
                                                         let _status = "未質檢";
@@ -107,11 +118,10 @@
                 });
             },
             editRow(rowData) {
-                let product_name = rowData.product_name;
-                product_name =1;
+                let templateId = rowData.templateId;
                 const params = new URLSearchParams();
                 params.append("jobId", rowData.id);
-                params.append("templateId", product_name);
+                params.append("templateId", templateId);
                 location.href = `qaInspection?` + params.toString();
             }
         },

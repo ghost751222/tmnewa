@@ -12,5 +12,7 @@ public class FirstLineApiResponseVo {
 
     private int id;
     private String token;
-    private List<Object> reasons;
+    private List<Reason> reasons;
+    private List<Log> logs;
+
 }

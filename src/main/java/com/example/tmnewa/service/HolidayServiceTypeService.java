@@ -20,4 +20,11 @@ public class HolidayServiceTypeService {
         Map<String, Object> parameters = new HashMap<>();
         return namedParameterJdbcTemplate.query(sql, parameters, new BeanPropertyRowMapper<>(HolidayServiceType.class));
     }
+
+    public List<HolidayServiceType> findAllByValue(String value) {
+        String sql = " select * from holiday_service_type where value=:value";
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("value",value);
+        return namedParameterJdbcTemplate.query(sql, parameters, new BeanPropertyRowMapper<>(HolidayServiceType.class));
+    }
 }

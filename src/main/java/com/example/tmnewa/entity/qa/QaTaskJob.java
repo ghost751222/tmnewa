@@ -61,6 +61,10 @@ public class QaTaskJob {
     @Comment("險別")
     @Nationalized
     private String product_name;
+
+    @Comment("模板ID")
+    private Long templateId;
+
     @Column(updatable = false)
     private Long creator;
     @Column(updatable = false)

@@ -311,6 +311,9 @@
                }
         }, mounted: function() {
             this.findTreeData()
+            setTimeout(()=>{
+                if(document.querySelector(".tree")) document.querySelector(".tree").click()
+            },500)
         }
 
   })

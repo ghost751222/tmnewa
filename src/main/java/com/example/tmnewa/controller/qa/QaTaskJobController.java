@@ -69,7 +69,7 @@ public class QaTaskJobController {
 
     @RequestMapping(value = {"/supply"} ,method = RequestMethod.GET)
     @ResponseBody
-    public String supply(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startTime , @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)@RequestParam LocalDate endTime){
+    public String supply(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startTime , @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)@RequestParam LocalDate endTime) throws Exception {
         tbCallLogSchedule.transferTbCallLogToQaTaskJob(startTime,endTime);
         return "ok";
     }
