@@ -3,6 +3,7 @@ package com.example.tmnewa.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.Nationalized;
 
 import java.time.DayOfWeek;
@@ -37,11 +38,13 @@ public class DNRoutine {
     @Nationalized
     private String dayOfWeek; // 若為每週某天則填入
 
-    @Column(name = "dn",nullable = false)
+    @Comment("線路,來源來自 holiday_service_type 的 category=service")
+    @Column(name = "dn")
     private String dn;
 
-    @Column(name = "holiday_service_type_id")
-    private int holidayServiceTypeId;
+    @Comment("線路,來源來自 holiday_service_type 的 category=type")
+    @Column(name = "holiday_type")
+    private Integer holidayType;
 
     @Column(updatable = false)
     private Long creator;

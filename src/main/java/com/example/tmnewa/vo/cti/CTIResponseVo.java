@@ -3,7 +3,7 @@ package com.example.tmnewa.vo.cti;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -12,10 +12,10 @@ public class CTIResponseVo {
 
     @Setter
     private int ret;
-    private Map<String, String> vars = new HashMap<>();
+    private Map<String, String> vars = new LinkedHashMap<>();
 
     public void addVar(String key,String value) {
-        if(vars ==null) vars = new HashMap<>();
+        if(vars ==null) vars = new LinkedHashMap<>();
         vars.put(key, value);
     }
 

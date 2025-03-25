@@ -40,16 +40,16 @@
                 <label class="form-label">線路:</label>
                 <select class="custom-select custom-select-sm form-control form-control-sm" v-model="dn">
                     <option value="">不選擇</option>
-                    <option v-for=" h in dnProducts" :value="h.value">{{h.name}}</option>
+                    <option v-for=" h in dns" :value="h.value">{{h.name}}</option>
                 </select>
             </div>
         </div>
 
         <div class="form-row col-3">
             <label class="form-label">假期類別:</label>
-            <select class="custom-select custom-select-sm form-control form-control-sm" v-model="holidayServiceTypeId">
+            <select class="custom-select custom-select-sm form-control form-control-sm" v-model="holidayType">
                 <option value="">不選擇</option>
-                <option v-for=" h in holidayServiceTypes" :value="h.id">{{h.name}}</option>
+                <option v-for=" h in queryHolidayTypes" :value="h.value">{{h.name}}</option>
             </select>
         </div>
     </form>
@@ -90,11 +90,10 @@
                         <div class="form-row col-6">
                             <div class="form-group col-md-6">
                                 <label for="startDate">開始日期(可選):</label>
-                                <input type="date" id="startDate" class="form-control"
-                                       v-model="dnRoutine.startDate">
+                                <input type="date" id="startDate" class="form-control" @change="dateChange" v-model="dnRoutine.startDate">
                             </div>
                             <div class="form-group col-md-6"><label for="endDate">結束日期(可選):</label>
-                                <input type="date" id="endDate" class="form-control" v-model="dnRoutine.endDate">
+                                <input type="date" id="endDate" class="form-control" v-model="dnRoutine.endDate" @change="dateChange">
                             </div>
                         </div>
                         <div class="form-row col-6">
@@ -112,7 +111,7 @@
                         </div>
                         <div class="form-row col-6">
                             <label class="form-label">星期:</label>
-                            <select class="form-control form-control-sm"  v-model="dnRoutine.dayOfWeek">
+                            <select class="form-control form-control-sm"  v-model="dnRoutine.dayOfWeek" @change="dayOfWeekChange">
                                 <option value="">不選擇</option>
                                 <option v-for=" h in dayOfWeeks" :value="h.value">{{h.name}}</option>
                             </select>
@@ -120,17 +119,17 @@
                         <div class="form-row col-6">
                             <label class="form-label">線路:</label>
                             <select class="custom-select custom-select-sm form-control form-control-sm"
-                                    v-model="dnRoutine.dn" @change="dnChange">
+                                    v-model="dnRoutine.dn">
                                 <option value="">不選擇</option>
-                                <option v-for=" h in dnProducts" :value="h.value">{{h.name}}</option>
+                                <option v-for=" h in dns" :value="h.value">{{h.name}}</option>
                             </select>
                         </div>
 
                         <div class="form-row col-6">
                             <label class="form-label">假期類別:</label>
-                            <select class="form-control form-control-sm"  v-model="dnRoutine.holidayServiceTypeId" required="required"  @change="dnChange">
+                            <select class="form-control form-control-sm"  v-model="dnRoutine.holidayType" required="required">
                                 <option value="">不選擇</option>
-                                <option v-for=" h in holidayServiceTypes" :value="h.id">{{h.name}}</option>
+                                <option v-for=" h in holidayTypes" :value="h.value">{{h.name}}</option>
                             </select>
                         </div>
 
@@ -162,15 +161,15 @@
                     endTime: null,
                     dayOfWeek: "",
                     dn: "",
-                    holidayServiceTypeId:""
+                    holidayType:""
                 },
                 startDate: "",
                 endDate: "",
                 dayOfWeek: "",
                 dn: "",
-                holidayServiceTypeId:"",
+                holidayType:"",
                 showModal: false,
-                fields: [{ name: 'id', title: 'ID' ,width: '5%' }, { name: 'dn', title: '線路' ,width: '5%' },
+                fields: [{ name: 'id', title: 'ID' ,width: '5%' },
                 { name: 'startDate', title: '開始日期' ,width: '10%'}, { name: 'startTime', title: '開始時間' },
                 { name: 'endDate', title: '結束日期' ,width: '10%'}, { name: 'endTime', title: '結束日期' },
                 { name: 'dayOfWeek', title: '週期' ,formatter(value){
@@ -178,8 +177,9 @@
                            return vue.dayOfWeeks.find(h=>h.value==value).name
                          }
                 },
-                { name: 'holidayServiceTypeId', title: '假期類別',width: '20%',formatter(value){
-                        return vue.holidayServiceTypes.find(h=>h.id==value).name
+                { name: 'dn', title: '線路' ,width: '5%' },
+                { name: 'holidayType', title: '假期類別',width: '20%',formatter(value){
+                        return vue.holidayServiceTypes.find(h=>h.value==value).name
                         }
                 },
                 { name: 'actions', title: 'Actions' }],
@@ -188,7 +188,9 @@
                 url: null,
                 holidayServiceTypes:[],
                 dayOfWeeks:[],
-                dnProducts:[],
+                dns:[],
+                holidayTypes:[],
+                queryHolidayTypes:[],
                 method: null,
             },
             methods: {
@@ -208,9 +210,14 @@
                     this.dnRoutine.endDate = rowData.endDate;
                     this.dnRoutine.startTime = rowData.startTime;
                     this.dnRoutine.endTime = rowData.endTime;
-                    this.dnRoutine.dn = rowData.dn;
-                    this.dnRoutine.dayOfWeek = rowData.dayOfWeek;
-                    this.dnRoutine.holidayServiceTypeId = rowData.holidayServiceTypeId;
+                    this.dnRoutine.dn = rowData.dn ==null ? "" : rowData.dn;
+                    this.dnRoutine.dayOfWeek = rowData.dayOfWeek ==null ? "" : rowData.dayOfWeek;
+                    if(rowData.dayOfWeek ==null){
+                      this.getHolidayTypes('type');
+                    }else{
+                      this.getHolidayTypes('peak');
+                    }
+                    this.dnRoutine.holidayType = rowData.holidayType;
                 },
                 deleteRow(rowData) {
                     this.method = "delete"
@@ -238,7 +245,10 @@
                         return
                     }
 
-                    if(!_dnRoutine.dayOfWeek) _dnRoutine.dayOfWeek=null
+                    if(!_dnRoutine.dayOfWeek) {
+                        _dnRoutine.dayOfWeek=null
+                        _dnRoutine.dn =null
+                    }
 
                     const config = {
                         url: this.baseUrl,
@@ -271,42 +281,48 @@
                     this.appendParams = {}
                     this.appendParams["startDate"] = this.startDate;
                     this.appendParams["endDate"] = this.endDate;
+                    if (this.dn) this.appendParams["dn"] = this.dn;
                     if (this.dayOfWeek) this.appendParams["dayOfWeek"] = this.dayOfWeek;
-                    if (this.holidayServiceTypeId) this.appendParams["holidayServiceTypeId"] = this.holidayServiceTypeId;
+                    if (this.holidayType) this.appendParams["holidayType"] = this.holidayType;
                     this.$nextTick(function () {
                         this.$refs.vuetable.refresh()
                     });
                 },
-                dnChange(){
-                    console.log(this.dnRoutine.holidayServiceTypeId)
-                    if(this.dnRoutine.holidayServiceTypeId == "11"){
-                        this.dnRoutine.dn=""
-                    }
+                dayOfWeekChange(){
+                    this.dnRoutine.startDate=""
+                    this.dnRoutine.endDate=""
+                    this.dnRoutine.dn=""
+                    this.getHolidayTypes('peak')
+                },
+                dateChange(){
+                     this.dnRoutine.dayOfWeek=""
+                     this.getHolidayTypes('type')
                 },
                 getHolidayServiceTypes(){
                     let _url  = [[@{/holidayServiceType}]]
                     axios.get(_url)
                         .then(res=>{
                             this.holidayServiceTypes = res.data;
+                            this.getDNS();
+                            this.getHolidayTypes('type');
+                            this.getQueryHolidayTypes()
                          })
                         .catch(err=>{
                                alert(err)
                          })
                 },
-                getDNProducts(){
-                    let _url  = [[@{/dnProduct}]]
-                    axios.get(_url)
-                        .then(res=>{
-                           this.dnProducts = res.data.map(d=> ( {value:d.dn,name:d.dn  })  );
-                         })
-                        .catch(err=>{
-                               alert(err)
-                    })
+                getDNS(){
+                    this.dns = this.holidayServiceTypes.filter(d=>d.category=='service').map(d=> ( {value:d.value,name: d.value + "_" + d.name  })  );
+                },
+                getHolidayTypes(category){
+                    this.holidayTypes = this.holidayServiceTypes.filter(d=>d.category==category).map(d=> ( {value:d.value,name:d.value + "_" + d.name  })  );
+                },
+                getQueryHolidayTypes(){
+                 this.queryHolidayTypes = this.holidayServiceTypes.filter(d=>d.category=='peak' || d.category=='type').map(d=> ( {value:d.value,name: d.value + "_" + d.name  })  );
                 }
             },
             mounted: function () {
                 this.getHolidayServiceTypes();
-                this.getDNProducts();
                 this.dayOfWeeks = [ {value :"MONDAY",name:"星期一"},{value :"TUESDAY",name:"星期二"},{value :"WEDNESDAY",name:"星期三"}
                                     ,{value :"THURSDAY",name:"星期四"},{value :"FRIDAY",name:"星期五"},{value :"SATURDAY",name:"星期六"}
                                     ,{value :"SUNDAY",name:"星期日"} ]

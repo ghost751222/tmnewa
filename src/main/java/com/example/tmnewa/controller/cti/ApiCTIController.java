@@ -1,7 +1,6 @@
 package com.example.tmnewa.controller.cti;
 
 import com.example.tmnewa.entity.DNRoutine;
-import com.example.tmnewa.entity.HolidayServiceType;
 import com.example.tmnewa.service.DNRoutineService;
 import com.example.tmnewa.service.HolidayServiceTypeService;
 import com.example.tmnewa.utils.IDValidatorUtils;
@@ -95,22 +94,29 @@ public class ApiCTIController {
             LocalTime localTime = localDateTime.toLocalTime();
             DayOfWeek dayOfWeek = localDateTime.getDayOfWeek();
             log.info("Holiday Api query {},{}", localDateTime, dayOfWeek.name());
-            var holidayServiceTypes = holidayServiceTypeService.findAllByValue(service);
-            var holidayServiceTypesIds = holidayServiceTypes.stream().map(HolidayServiceType::getId).toList();
+
 
             List<DNRoutine> dnRoutines = dnRoutineService.findByApiQuery(localDate, localTime, dayOfWeek);
-            String v_Type = Strings.EMPTY;
-            String v_Peak = Strings.EMPTY;
-            for (DNRoutine d : dnRoutines) {
-                if (holidayServiceTypesIds.contains(d.getHolidayServiceTypeId())) {
-                    ctiResponseVo.setRet(0);
-                    v_Type = "101";
-                    v_Peak = "200";
-                    break;
+            if (!dnRoutines.isEmpty()) {
+                String v_Type = Strings.EMPTY;
+                String v_Peak = Strings.EMPTY;
+                for (DNRoutine d : dnRoutines) {
+                    if (d.getDn().equals(service)) {
+                        ctiResponseVo.setRet(0);
+                        v_Type = String.valueOf(d.getHolidayType());
+                        v_Peak = Strings.EMPTY;
+                        break;
+                    }else if( dayOfWeek.name().equals(d.getDayOfWeek())){
+                        ctiResponseVo.setRet(0);
+                        v_Type = Strings.EMPTY;
+                        v_Peak =String.valueOf(d.getHolidayType());
+                        break;
+                    }
                 }
+                ctiResponseVo.addVar("v_Type", v_Type);
+                ctiResponseVo.addVar("v_Peak", v_Peak);
             }
-            ctiResponseVo.addVar("v_Type", v_Type);
-            ctiResponseVo.addVar("v_Peak", v_Peak);
+
         } catch (Exception e) {
             log.error(String.valueOf(e));
         }

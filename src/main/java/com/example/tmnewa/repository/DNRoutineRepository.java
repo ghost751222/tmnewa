@@ -24,12 +24,13 @@ public interface DNRoutineRepository extends JpaRepository<DNRoutine, String> {
             " and ( end_date <= date(:#{#requestQueryVo.endDate})     || :#{#requestQueryVo.endDate} is null  )" +
             " and (dn = :#{#requestQueryVo.dn} || :#{#requestQueryVo.dn} is null)" +
             " and (day_of_week = :#{#requestQueryVo.dayOfWeek} || :#{#requestQueryVo.dayOfWeek} is null)" +
-            " and (holiday_service_type_id = :#{#requestQueryVo.holidayServiceTypeId} || :#{#requestQueryVo.holidayServiceTypeId} is null)",
+            " and (holiday_type = :#{#requestQueryVo.holidayType} || :#{#requestQueryVo.holidayType} is null)",
             nativeQuery = true)
     Page<DNRoutine> findByQueryParameter(@Param("requestQueryVo") RequestQueryVo requestQueryVo, Pageable pageable);
 
     @Query (value="select * from dn_routine" +
             "      where (:date between start_date and end_date   or :dayOfWeek = day_of_week) " +
-            "       and  (:time between start_time and end_time) ",nativeQuery = true)
+            "       and  (:time between start_time and end_time) " +
+            "       order by start_date desc",nativeQuery = true)
     List<DNRoutine> findByApiQuery(@Param("date") LocalDate localDate, @Param("time") LocalTime localTime, @Param("dayOfWeek") String dayOfWeek);
 }

@@ -17,5 +17,5 @@ public class RequestQueryVo {
     private LocalDate endDate;
     private String dn;
     private String dayOfWeek;
-    private Integer holidayServiceTypeId;
+    private Integer holidayType;
 }
