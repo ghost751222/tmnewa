@@ -1,15 +1,14 @@
 package com.example.tmnewa.controller.cti;
 
+import com.example.tmnewa.config.TWNEWAConfigProperties;
 import com.example.tmnewa.entity.DNRoutine;
 import com.example.tmnewa.service.DNRoutineService;
-import com.example.tmnewa.service.HolidayServiceTypeService;
 import com.example.tmnewa.utils.IDValidatorUtils;
 import com.example.tmnewa.utils.ToolUtils;
 import com.example.tmnewa.vo.cti.CTIResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,15 +42,9 @@ public class ApiCTIController {
     @Autowired
     DNRoutineService dnRoutineService;
 
-    @Autowired
-    HolidayServiceTypeService holidayServiceTypeService;
 
-    @Value("${tmnewa.smsIp:smsb2c.mitake.com.tw}")
-    String smsIp;
-    @Value("${tmnewa.smsId:crm4527}")
-    String smsId;
-    @Value("${tmnewa.smsPassword:ec120823}")
-    String smsPassword;
+    @Autowired
+    TWNEWAConfigProperties twnewaConfigProperties;
 
     @GetMapping("/IdResult")
     public String IdResult(@RequestParam(value = "ID") String id) {
@@ -106,10 +99,10 @@ public class ApiCTIController {
                         v_Type = String.valueOf(d.getHolidayType());
                         v_Peak = Strings.EMPTY;
                         break;
-                    }else if( dayOfWeek.name().equals(d.getDayOfWeek())){
+                    } else if (dayOfWeek.name().equals(d.getDayOfWeek())) {
                         ctiResponseVo.setRet(0);
                         v_Type = Strings.EMPTY;
-                        v_Peak =String.valueOf(d.getHolidayType());
+                        v_Peak = String.valueOf(d.getHolidayType());
                         break;
                     }
                 }
@@ -132,11 +125,11 @@ public class ApiCTIController {
             String Service = map.get("Service");
             String Phone = map.get("Phone");
 
-            String params = "username=" + smsId +
-                    "&password=" + smsPassword +
+            String params = "username=" + twnewaConfigProperties.getSmsId() +
+                    "&password=" + twnewaConfigProperties.getSmsPassword() +
                     "&dstaddr=" + Phone +
                     "&smbody=簡訊SmSend測試";
-            URL url = new URL("https://" + smsIp + "/b2c/mtk/SmSend?CharsetURL=UTF-8");
+            URL url = new URL("https://" + twnewaConfigProperties.getSmsIp() + "/b2c/mtk/SmSend?CharsetURL=UTF-8");
             HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
