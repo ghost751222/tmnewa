@@ -75,29 +75,31 @@ public class WebSecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/common/login?logout")
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout")
                         .deleteCookies("JSESSIONID")
-//                        .addLogoutHandler((request, response, authentication) -> {
-//                            if ("oauth2Login".equals(request.getSession().getAttribute("loginType"))) {
-//                                // 触发 Azure AD 的登出端点
-//                                String logoutUrl = "https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/logout?post_logout_redirect_uri={redirect-uri}&client_id={client_id}";
-//                                // 将 URL 替换为实际的 tenant-id 和 redirect-uri
-//                                logoutUrl = logoutUrl.replace("{tenant-id}", twnewaConfigProperties.getAzureTenantId())
-//                                        .replace("{redirect-uri}", URLEncoder.encode(twnewaConfigProperties.getAzurePostLogoutRedirectUri(), StandardCharsets.UTF_8))
-//                                        .replace("{client_id}", URLEncoder.encode(twnewaConfigProperties.getAzureClientId(), StandardCharsets.UTF_8));
-//                                try {
-//                                    response.sendRedirect(logoutUrl); // 重定向到 Azure AD 的登出端点
-//                                } catch (IOException e) {
-//                                    throw new RuntimeException(e);
-//                                }
-//                            }
-//                        })
+                        .addLogoutHandler((request, response, authentication) -> {
+                            if ("oauth2Login".equals(request.getSession().getAttribute("loginType"))) {
+                                // 触发 Azure AD 的登出端点
+                                String logoutUrl = "https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/logout?post_logout_redirect_uri={redirect-uri}&client_id={client_id}";
+                                logoutUrl="https://login.microsoftonline.com/common/oauth2/logout?post_logout_redirect_uri={redirect-uri}&client_id={client_id}";
+                                // 将 URL 替换为实际的 tenant-id 和 redirect-uri
+                                logoutUrl = logoutUrl.replace("{tenant-id}", twnewaConfigProperties.getAzureTenantId())
+                                        .replace("{redirect-uri}", URLEncoder.encode(twnewaConfigProperties.getAzurePostLogoutRedirectUri(), StandardCharsets.UTF_8))
+                                        .replace("{client_id}", URLEncoder.encode(twnewaConfigProperties.getAzureClientId(), StandardCharsets.UTF_8));
+                                try {
+                                    response.sendRedirect(logoutUrl); // 重定向到 Azure AD 的登出端点
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        })
                 )
                 .authenticationProvider(loginAuthProvider)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?error=true"))
                 )
                 .oauth2Login((oauth2Login) -> oauth2Login.successHandler(loginAuthenticationSuccessHandler)
+
                 )
 
         ;

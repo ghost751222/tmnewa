@@ -94,7 +94,7 @@ public class ApiCTIController {
                 String v_Type = Strings.EMPTY;
                 String v_Peak = Strings.EMPTY;
                 for (DNRoutine d : dnRoutines) {
-                    if (d.getDn().equals(service)) {
+                    if (service.equals(d.getDn())) {
                         ctiResponseVo.setRet(0);
                         v_Type = String.valueOf(d.getHolidayType());
                         v_Peak = Strings.EMPTY;
