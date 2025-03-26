@@ -76,7 +76,9 @@ public class WebSecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout")
-                        .deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true) // 使 HTTP Session 失效
+                        .clearAuthentication(true) // 清除認證
+                        .deleteCookies("JSESSIONID") // 刪除 session cookie
                         .addLogoutHandler((request, response, authentication) -> {
                             if ("oauth2Login".equals(request.getSession().getAttribute("loginType"))) {
                                 // 触发 Azure AD 的登出端点

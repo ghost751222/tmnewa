@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,27 +44,9 @@ public class QaTaskJobController {
 
     @RequestMapping(value = {"/data"} ,method = RequestMethod.GET)
     @ResponseBody
-    public Page<QaTaskJob> data(@RequestParam Map<String, Object> params){
+    public Page<QaTaskJob> data(@RequestParam Map<String, Object> params, Model model){
+        PageRequest pageRequest = (PageRequest) model.getAttribute("pageRequest");
         RequestQueryVo requestQueryVo = JacksonUtils.mapToObject(params, RequestQueryVo.class);
-
-
-        String sortSource = requestQueryVo.getSort();
-        String sortField = null;
-        String sortDirection = null;
-        int page = requestQueryVo.getPageIndex() - 1;
-        int size = requestQueryVo.getPageSize();
-        PageRequest pageRequest = null;
-        if (!Strings.isEmpty(sortSource)) {
-            sortField = sortSource.split("\\|")[0];
-            sortDirection = sortSource.split("\\|")[1];
-            Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name())
-                    ? Sort.by(sortField).ascending()
-                    : Sort.by(sortField).descending();
-            pageRequest = PageRequest.of(page, size, sort);
-        } else {
-            pageRequest = PageRequest.of(page, size);
-        }
-
         return  qaTaskJobService.findByQueryParameter(requestQueryVo, pageRequest);
     }
 
