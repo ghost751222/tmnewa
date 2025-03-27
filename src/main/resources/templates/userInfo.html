@@ -154,13 +154,15 @@
 
                 },
                 deleteRow(rowData){
-                  this.action = "del"
-                  this.user.id = rowData.id;
-                  this.user.account = rowData.account;
-                  this.user.password = rowData.password;
-                  this.user.name = rowData.name;
-                  this.user.roleInfos =[]
-                  this.sendData()
+                  if(confirm('是否刪除')){
+                      this.action = "del"
+                      this.user.id = rowData.id;
+                      this.user.account = rowData.account;
+                      this.user.password = rowData.password;
+                      this.user.name = rowData.name;
+                      this.user.roleInfos =[]
+                      this.sendData()
+                  }
                 },
                 rePassword(e,rowData){
                       this.action = "upd"
