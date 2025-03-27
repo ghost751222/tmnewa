@@ -45,14 +45,20 @@ public class QaTaskJob {
 
     @Comment("質檢時間")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime qa_time;
+    @Column(name = "qa_time")
+    private LocalDateTime qaTime;
 
     @Comment("服務原因")
     private String service_reason;
 
     @Comment("質檢分數總分")
-    @Column(name = "total_score")
-    private Integer totalScore;
+    @Column(name = "score_total")
+    private Integer scoreTotal;
+
+    @Comment("分數總分")
+    @Column(name = "supervisor_score_total")
+    private Integer supervisorScoreTotal;
+
 
     @Comment("質檢狀態")
     @Column(nullable = false)

@@ -133,11 +133,14 @@
 
                  },
                  deleteRow(rowData){
-                   this.action = "del"
-                   this.qaDesignTemplate.id = rowData.id;
-                   this.qaDesignTemplate.name = rowData.name;
-                   this.qaDesignTemplate.product = rowData.product;
-                   this.sendData()
+                   if(confirm('是否要刪除')){
+                       this.action = "del"
+                       this.qaDesignTemplate.id = rowData.id;
+                       this.qaDesignTemplate.name = rowData.name;
+                       this.qaDesignTemplate.product = rowData.product;
+                       this.sendData()
+                   }
+
                  },
                  openQaDesignItem(rowData){
 

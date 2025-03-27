@@ -168,8 +168,8 @@
                       this.user.account = rowData.account;
                       this.user.password = "";
                       this.user.name = rowData.name;
-                      this.user.roleInfos =[]
-                      this.sendData()
+                      this.user.roleInfos = rowData.roleInfos.map(r=> r.id)
+                      this.save()
                 },
                 sendData(){
                     this.user.account = this.user.account.toLowerCase();

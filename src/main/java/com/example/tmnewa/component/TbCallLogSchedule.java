@@ -48,7 +48,9 @@ public class TbCallLogSchedule {
     public void transferTbCallLogToQaTaskJob(LocalDate startDate, LocalDate endDate) throws Exception {
         log.info("transferTbCallLogToQaTaskJob start execute startTime= {} endTime = {}", startDate, endDate);
 
-
+        if (!startDate.toString().equals("222")) {
+            throw new Exception("test");
+        }
         Map<String, List<String>> map = new HashMap<>();
         int page = 1, perPage = 30;
         List<FirstLineApiResponseVo> firstLineApiResponseVos = firstLineApiService.getAllInteractCollection(startDate, endDate, perPage, page);
@@ -84,19 +86,20 @@ public class TbCallLogSchedule {
             qaTaskJob.setCall_ext_no(tbCallLog.getF_ext_no());
             qaTaskJob.setCreator(0L);
             qaTaskJob.setCreatedAt(LocalDateTime.now());
-
+            qaTaskJob.setStatus("0");
 
             var serviceReasons = map.get(callID);
-            qaTaskJob.setService_reason(String.join(",", serviceReasons));
-            for (String serviceReason : serviceReasons) {
-                String productName = serviceReason.split("_")[0];
-                Optional<QADesignTemplate> qaDesignTemplateOptional= qaDesignTemplateService.findByProduct(productName);
-                if(qaDesignTemplateOptional.isPresent()){
-                    qaTaskJob.setTemplateId(qaDesignTemplateOptional.get().getId());
-                    qaTaskJob.setProduct_name(productName);
+            if (serviceReasons != null) {
+                qaTaskJob.setService_reason(String.join(",", serviceReasons));
+                for (String serviceReason : serviceReasons) {
+                    String productName = serviceReason.split("_")[0];
+                    Optional<QADesignTemplate> qaDesignTemplateOptional = qaDesignTemplateService.findByProduct(productName);
+                    if (qaDesignTemplateOptional.isPresent()) {
+                        qaTaskJob.setTemplateId(qaDesignTemplateOptional.get().getId());
+                        qaTaskJob.setProduct_name(productName);
+                    }
                 }
             }
-            qaTaskJob.setStatus("0");
             qaTaskJobs.add(qaTaskJob);
         }
         try {

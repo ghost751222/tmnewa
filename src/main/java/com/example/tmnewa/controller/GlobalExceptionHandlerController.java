@@ -60,7 +60,7 @@ public class GlobalExceptionHandlerController implements ResponseBodyAdvice<Obje
 
     }
 
-    @ExceptionHandler(Exception.class)
+    //@ExceptionHandler(Exception.class)
     public void handleError(HttpServletRequest req, Exception ex) {
         log.error("{}", "Request: " + req.getRequestURL() + " raised " + ex);
 

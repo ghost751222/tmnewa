@@ -91,7 +91,7 @@
                                                                     }
                                                             } },
                          { name: 'product_name', title: '險別' },{ name: 'service_reason', title: '服務原因' },
-                         { name: 'call_agent_id', title: '專員ID' }, { name: 'call_ext_no', title: '分機' }, { name: 'qa_time', title: '質檢時間' },
+                         { name: 'call_agent_id', title: '專員ID' }, { name: 'call_ext_no', title: '分機' }, { name: 'qaTime', title: '質檢時間' },
                          {name :'status' , title:'質檢狀態',formatter(value){
                                                         let _status = "未質檢";
                                                         if(value =="1") _status = '已質檢'
@@ -120,8 +120,10 @@
             editRow(rowData) {
                 let templateId = rowData.templateId;
                 const params = new URLSearchParams();
-                params.append("jobId", rowData.id);
-                params.append("templateId", templateId);
+                localStorage.setItem("jobId", rowData.id);
+                localStorage.setItem("templateId", templateId);
+<!--                params.append("jobId", rowData.id);-->
+<!--                params.append("templateId", templateId);-->
                 location.href = `qaInspection?` + params.toString();
             }
         },

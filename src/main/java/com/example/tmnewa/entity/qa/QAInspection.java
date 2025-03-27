@@ -35,7 +35,7 @@ public class QAInspection {
     @Column(name = "default_score")
     private int defaultScore;
 
-    @Column(name = "score",updatable = false)
+    @Column(name = "score")
     private int score;
 
     @Nationalized

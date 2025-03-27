@@ -70,21 +70,26 @@
 
     </modal>
 
-    <div class="col-3">
+    <div class="col-4">
         <ul>
             <tree-item class="item" :item="treeData" @item-click="itemClick"></tree-item>
         </ul>
     </div>
 
 
-    <div class="col-9">
+    <div class="col-8">
 
 
-        <div class="w-25">
-            <button type="button" class="btn btn-primary" @click="add">
+        <div class="w-50">
+            <button class="btn btn-primary" @click="add">
                 <i class="fa-solid fa-folder-plus"></i> 新增評估項目
             </button>
-            <button type="button" class="btn btn-secondary" @click="previousPage">
+
+            <button class="btn btn-primary" @click="editRow(itemSelected)">
+                <i class="fa-solid fa-edit"></i> 編輯評估項目
+            </button>
+
+            <button class="btn btn-secondary" @click="previousPage">
                 <i class="fa fa-undo"></i> 返回
             </button>
         </div>
@@ -163,15 +168,16 @@
             methods: {
                 toggle: function (e) {
                     var target = e.target
-                    var tree = document.querySelectorAll(".tree")
-                    tree.forEach(t => {
-                        t.classList.remove('active');
-                    })
-                    target.classList.add("active")
-
-                    if (this.isFolder) {
-                        this.isOpen = !this.isOpen;
+                    console.log(target.tagName)
+                    if(target.tagName == "I"){
+                         if (this.isFolder) this.isOpen = !this.isOpen;
+                    }else{
+                        this.isOpen = true
                     }
+
+                    var tree = document.querySelectorAll(".tree")
+                    tree.forEach(t => {t.classList.remove('active');})
+                    target.classList.add("active")
                     this.item["isFolder"] = this.isFolder
                     this.$emit('item-click', this.item)
                 }
@@ -198,7 +204,8 @@
                          { name: 'seq', title: '順序' }, { "name": "actions", "title": "Actions" }],
                 url: [[@{/qaDesignItem/data}]],
                 sortOrder: [{ field: "Id", direction: "asc" }],
-
+                treeMaxDepth: 0,  // 新增 maxDepth 來記錄最大深度
+                maxTreeMaxDepth:3
             },
             methods: {
                 openModal() {
@@ -210,6 +217,7 @@
                     this.sendData()
                 },
                 add() {
+
                     if( this.itemSelected == null){
                         alert("請先點選要新增的類別")
                         return
@@ -231,6 +239,7 @@
                         this.$refs.vuetable.refresh()
                     });
                     this.findTreeData();
+                    this.calculateMaxDepth(this.treeData.children)
                 },
                 findTreeData() {
                     let urlParams = new URLSearchParams(window.location.search);
@@ -249,24 +258,46 @@
                     this.query()
                 },
                 editRow(rowData) {
+                    console.log(rowData)
+                    if(rowData == null){
+                        return
+                    }
                     this.action = "upd"
                     this.qaDesignItem.id = rowData.id;
                     this.qaDesignItem.name = rowData.name;
                     this.qaDesignItem.seq = rowData.seq;
+                    this.qaDesignItem.score = rowData.score
                     this.qaDesignItem.parentId = rowData.parentId;
                     this.openModal();
 
                 },
                 deleteRow(rowData) {
-                    this.action = "del"
-                    this.qaDesignItem.id = rowData.id;
-                    this.qaDesignItem.name = rowData.name;
-                    this.qaDesignItem.seq = rowData.seq;
-                    this.sendData()
+                    if(confirm('是否要刪除')){
+                        this.action = "del"
+                        this.qaDesignItem.id = rowData.id;
+                        this.qaDesignItem.name = rowData.name;
+                        this.qaDesignItem.seq = rowData.seq;
+                        this.sendData()
+                    }
                 },
-                previousPage: function () {
+                previousPage() {
                     window.parent.document.getElementById('qaDesignItemDiv').style.display = "none"
                     window.parent.document.getElementById('qaDesignTemplateDiv').style.display = "block"
+                },
+
+                calculateMaxDepth(points, currentDepth = 1) {
+                    points.forEach(point => {
+                        point.currentDepth = currentDepth;
+                        if (point.children && point.children.length > 0) {
+                            this.calculateMaxDepth(point.children, currentDepth + 1);
+                        }
+                    });
+                    this.treeMaxDepth = Math.max(this.treeMaxDepth, currentDepth);
+                },
+                isExceedMaxTreeMaxDepth(){
+                    let _isExceedMaxTreeMaxDepth =false;
+                    if(this.itemSelected.currentDepth >= this.maxTreeMaxDepth) _isExceedMaxTreeMaxDepth = true
+                    return _isExceedMaxTreeMaxDepth;
                 },
                 sendData() {
 
@@ -289,6 +320,10 @@
                             config.method = 'put'
                             break;
                    }
+                    if(this.action == "add" && this.isExceedMaxTreeMaxDepth()){
+                           alert(`最多新增${this.maxTreeMaxDepth}層階級`)
+                           return
+                    }
 
                     this.$http(config).then((res) => {
 

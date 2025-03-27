@@ -52,8 +52,15 @@ public class UserInfoService extends LoginService{
     public UserInfo updateUserInfo(UserInfo userInfo) throws JsonProcessingException {
         if(Strings.isEmpty(userInfo.getPassword())){
             userInfo.setPassword(passwordEncoder.encode(DefaultPassWord));
-        }else{
-            userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
+        }
+        else{
+            String password = userInfo.getPassword();
+            if(password.startsWith("$2a$")){
+                userInfo.setPassword(password);
+            }else{
+                userInfo.setPassword(passwordEncoder.encode(password));
+            }
+
         }
         userInfo.setUpdater(getLoginId());
         userInfo.setUpdatedAt(LocalDateTime.now());

@@ -2,38 +2,73 @@
 
 <head>
     <title layout:fragment="title">質檢列表</title>
+    <style layout:fragment="style">
+        th {
+            text-align: center !important;
+            vertical-align: middle !important;
+            white-space: nowrap !important;
+        }
+
+<!--        td {-->
+<!--            text-align: center !important;-->
+<!--            vertical-align: middle !important;-->
+<!--            white-space: nowrap !important;-->
+<!--            text-overflow: ellipsis !important;-->
+<!--        }-->
+        input[type="number"]{
+            width:45px;
+            text-align:center;
+            padding-left:10px;
+        }
+
+    </style>
 </head>
 
 <body>
-<div layout:fragment="content" id="app">
+<div layout:fragment="content" id="app" class="container-fluid">
+    <form @submit.prevent="saveClick">
     <div style=" display: flex;align-items: center;justify-content: center;">
         <button @click="returnClick" class="btn btn-info">返回</button>
-        <button @click="saveClick" class="btn btn-primary">儲存</button>
+        <button class="btn btn-primary" ref="saveBtn" disabled>儲存</button>
     </div>
-        <div style=" display: flex;align-items: center;justify-content: center;">
-            <h1>{{title}}</h1>
-        </div>
     <div style=" display: flex;align-items: center;justify-content: center;">
-            <table class="table table-bordered">
-                <thead class="thead-light">
-                <tr>
-                    <th :colSpan="treeMaxDepth">評分項目</th>
-                    <th>配分</th>
-                    <th>評語</th>
-                    <th>初評分數</th>
-                    <th>評語</th>
-                    <th>複評分數</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr is="inspection-point" v-for="(point, index) in inspectionPoints" :key="point.id"
-                    :point="point" :tree-max-depth="treeMaxDepth" :is-root="true" :depth="1">
-                </tr>
-                </tbody>
-            </table>
-        </div>
+        <h1>{{title}}</h1>
+    </div>
+    <div>
+        <table class="table table-bordered">
+            <thead class="thead-light">
+            <tr>
+                <!--                    <th :colSpan="treeMaxDepth">評分項目</th>-->
+                <th>類別</th>
+                <th>項目</th>
+                <th>評估項目標準</th>
+                <th>配分</th>
+                <th>評語</th>
+                <th>初評分數</th>
+                <th>評語</th>
+                <th>複評分數</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr is="inspection-point" v-for="(point, index) in inspectionPoints" :key="point.id" :point="point"
+                :tree-max-depth="treeMaxDepth" :is-root="true" :depth="1">
+            </tr>
+            </tbody>
 
+            <tfoot>
+            <tr>
+                <th :colSpan="treeMaxDepth" style="background:yellow;">分數總計</th>
+                <td></td>
+                <td></td>
+                <td>{{score}}</td>
+                <td></td>
+                <td>{{supervisorScore}}</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
 
+    </form>
 
 </div>
 </body>
@@ -79,7 +114,7 @@
                     else {
                         return 1
                     }
-                }
+                },
             },
             computed: {
                 isLeafNode() {
@@ -96,9 +131,9 @@
                     <template v-if="point.children.length == 0">
                         <td >{{point.defaultScore}}</td>
                         <td ><textarea v-model="point.notes" disabled class="user"/></td>
-                        <td ><input type="number" min="0" v-model="point.score" disabled class="user"/></td>
+                        <td ><input type="number" min="0" :max="point.defaultScore" v-model="point.score" disabled class="user"/></td>
                         <td ><textarea v-model="point.supervisorNotes" disabled class="manager"/></td>
-                        <td ><input type="number" min="0" v-model="point.supervisorScore" disabled class="manager"/></td>
+                        <td ><input type="number" min="0" :max="point.defaultScore" v-model="point.supervisorScore" disabled class="manager"/></td>
                     </template>
                  </tr>
                   <tr is="inspection-point" v-if="point.children && point.children.length > 0"
@@ -125,6 +160,8 @@
             title: "",
             inspectionPoints: [],
             treeMaxDepth: 0,  // 新增 maxDepth 來記錄最大深度
+            score: 0,
+            supervisorScore: 0,
         },
             methods: {
             // 計算樹狀結構的最大深度
@@ -136,11 +173,29 @@
                 });
                 this.treeMaxDepth = Math.max(this.treeMaxDepth, currentDepth);
             },
+            // 計算總分
+            calculateScore(points) {
+
+                points.forEach(point => {
+                    if (point.children && point.children.length > 0) {
+                        this.calculateScore(point.children);
+                    } else {
+                        this.score += !point.score || isNaN(point.score) ? 0 : parseInt(point.score)
+                        this.supervisorScore += !point.supervisorScore || isNaN(point.supervisorScore) ? 0 : parseInt(point.supervisorScore)
+                    }
+                });
+
+            },
             saveClick() {
+                var data = {
+                    inspectionPoints: this.inspectionPoints,
+                    score: this.score,
+                    supervisorScore: this.supervisorScore,
+                }
                 const config = {
                     url: this.url,
                     method: "post",
-                    data: JSON.stringify(this.inspectionPoints),
+                    data: JSON.stringify(data),
                     headers: {
                         'Content-Type': 'application/json;charset=UTF-8'
                     }
@@ -156,36 +211,51 @@
                 })
             },
             returnClick() {
-                location.href=[[@{/qaTaskJob}]]
+                location.href = [[@{/qaTaskJob}]]
+                localStorage.clear();
+        }
+        }, watch: {
+            inspectionPoints: {
+                handler: function (val, oldVal) {
+                    this.score = 0;
+                    this.supervisorScore = 0;
+                    this.calculateScore(val);
+                },
+                deep: true
             }
         },
-            mounted: function () {
+        mounted: function () {
 
-                let paramsString = window.location.search;
-                let searchParams = new URLSearchParams(paramsString);
+            let paramsString = window.location.search;
+            let searchParams = new URLSearchParams(paramsString)
+            ;
+            //this.jobId = searchParams.get("jobId");
+            //this.templateId = searchParams.get("templateId")
 
+            this.jobId = localStorage.getItem("jobId");
+            this.templateId = localStorage.getItem("templateId")
 
-                this.jobId = searchParams.get("jobId");
-                this.templateId = searchParams.get("templateId")
+            let url = `${this.url}/${this.jobId}?templateId=${this.templateId}`;
+            axios.get(url).then(res => {
+                this.title = res.data[0].name
+                this.inspectionPoints = res.data[0].children;
+                // 計算最大深度
+                this.calculateMaxDepth(this.inspectionPoints);
 
-                let url = `${this.url}/${this.jobId}?templateId=${this.templateId}`;
-                axios.get(url).then(res => {
-                    this.title = res.data[0].name
-                    this.inspectionPoints = res.data[0].children;
-                    // 計算最大深度
-                    this.calculateMaxDepth(this.inspectionPoints);
-
-                }).catch(err => {
-                    if (err.response) {
-                        alert(err.response.data.message)
-                    } else {
-                        alert(err);
-                    }
-                });
-            }, updated(){
-                    if(this.isManager) document.querySelectorAll(".manager").forEach(item => { console.log(item); item.disabled = false });
-                    if (this.isUser) document.querySelectorAll(".user").forEach(item => item.disabled = false);
+            }).catch(err => {
+                if (err.response) {
+                    alert(err.response.data.message)
+                } else {
+                    alert(err);
+                }
+            });
+        }, updated(){
+            if (this.isManager) document.querySelectorAll(".manager").forEach(item => { console.log(item); item.disabled = false });
+            if (this.isUser) document.querySelectorAll(".user").forEach(item => item.disabled = false);
+            if (this.isUser || this.isManager) {
+                this.$refs.saveBtn.disabled = false
             }
+        }
         })
     </script>
 </th:block>

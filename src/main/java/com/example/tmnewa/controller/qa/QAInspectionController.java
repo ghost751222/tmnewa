@@ -8,6 +8,7 @@ import com.example.tmnewa.service.qa.QATaskJobService;
 import com.example.tmnewa.utils.JacksonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,13 +49,20 @@ public class QAInspectionController {
     @RequestMapping(value = {"/", ""}, method = RequestMethod.POST)
     @ResponseBody
     @Transactional
-    public String update(@RequestBody  List<QAInspection> qaInspections) throws JsonProcessingException {
+    //public String update(@RequestBody  List<QAInspection> qaInspections) throws JsonProcessingException {
+    public String update(@RequestBody  Map<String,Object> map) throws JsonProcessingException {
+
+        int score = (int) map.get("score");
+        int supervisorScore = (int) map.get("supervisorScore");
+        ArrayList<QAInspection> qaInspections =JacksonUtils.convertValue(map.get("inspectionPoints"),JacksonUtils.getMapper().getTypeFactory().constructCollectionType(ArrayList.class, QAInspection.class));
         Long jobId = qaInspections.isEmpty() ? 0L: qaInspections.get(0).getJobId();
         Optional<QaTaskJob> qaTaskJobOptional = qaTaskJobService.findById(jobId);
         if(qaTaskJobOptional.isPresent()){
             QaTaskJob qaTaskJob = qaTaskJobOptional.get();
             qaTaskJob.setStatus("1");
-            qaTaskJob.setQa_time(LocalDateTime.now());
+            qaTaskJob.setScoreTotal(score);
+            qaTaskJob.setSupervisorScoreTotal(supervisorScore);
+            if(qaTaskJob.getQaTime() == null) qaTaskJob.setQaTime(LocalDateTime.now());
             qaTaskJobService.update(qaTaskJob);
             qaInspectionService.update(qaInspections);
         }
