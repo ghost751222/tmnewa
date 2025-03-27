@@ -28,7 +28,7 @@
 <div layout:fragment="content" id="app" class="container-fluid">
     <form @submit.prevent="saveClick">
     <div style=" display: flex;align-items: center;justify-content: center;">
-        <button @click="returnClick" class="btn btn-info">返回</button>
+        <button @click.prevent="returnClick" class="btn btn-info">返回</button>
         <button class="btn btn-primary" ref="saveBtn" disabled>儲存</button>
     </div>
     <div style=" display: flex;align-items: center;justify-content: center;">
@@ -213,7 +213,7 @@
             returnClick() {
                 location.href = [[@{/qaTaskJob}]]
                 localStorage.clear();
-        }
+            }
         }, watch: {
             inspectionPoints: {
                 handler: function (val, oldVal) {
