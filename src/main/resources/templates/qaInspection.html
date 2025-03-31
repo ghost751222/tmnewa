@@ -29,7 +29,7 @@
     <form @submit.prevent="saveClick">
     <div style=" display: flex;align-items: center;justify-content: center;">
         <button @click.prevent="returnClick" class="btn btn-info">返回</button>
-        <button class="btn btn-primary" ref="saveBtn" disabled>儲存</button>
+        <button class="btn btn-primary" ref="saveBtn" v-if="isShowSave">儲存</button>
     </div>
     <div style=" display: flex;align-items: center;justify-content: center;">
         <h1>{{title}}</h1>
@@ -162,6 +162,7 @@
             treeMaxDepth: 0,  // 新增 maxDepth 來記錄最大深度
             score: 0,
             supervisorScore: 0,
+            isShowSave:false,
         },
             methods: {
             // 計算樹狀結構的最大深度
@@ -252,11 +253,9 @@
         }, updated(){
             if (this.isManager) document.querySelectorAll(".manager").forEach(item => { console.log(item); item.disabled = false });
             if (this.isUser) document.querySelectorAll(".user").forEach(item => item.disabled = false);
-            if (this.isUser || this.isManager) {
-                this.$refs.saveBtn.disabled = false
-            }
+            if (this.isUser || this.isManager) this.isShowSave = true
         }
-        })
+    })
     </script>
 </th:block>
 

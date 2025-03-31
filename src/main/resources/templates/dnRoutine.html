@@ -133,6 +133,11 @@
                             </select>
                         </div>
 
+                        <div class="form-row col-6">
+                            <label class="form-label">備註:</label>
+                            <input type="text" class="form-control" v-model="dnRoutine.notes">
+                        </div>
+
                         <hr/>
                         <button type="submit" class="btn btn-primary">儲存</button>
                         <button type="button" class="btn btn-info" @click="showModal = false">關閉</button>
@@ -161,7 +166,8 @@
                     endTime: null,
                     dayOfWeek: "",
                     dn: "",
-                    holidayType:""
+                    holidayType:"",
+                    notes:"",
                 },
                 startDate: "",
                 endDate: "",
@@ -170,16 +176,16 @@
                 holidayType:"",
                 showModal: false,
                 fields: [{ name: 'id', title: 'ID' ,width: '5%' },
-                { name: 'startDate', title: '開始日期' ,width: '10%'}, { name: 'startTime', title: '開始時間' },
-                { name: 'endDate', title: '結束日期' ,width: '10%'}, { name: 'endTime', title: '結束日期' },
-                { name: 'dayOfWeek', title: '週期' ,formatter(value){
+                { name: 'startDate', title: '開始日期' ,width: '7%'}, { name: 'startTime', title: '開始時間',width: '7%' },
+                { name: 'endDate', title: '結束日期' ,width: '7%'}, { name: 'endTime', title: '結束時間',width: '7%' },
+                { name: 'dayOfWeek', title: '週期' ,width: '7%',formatter(value){
                            if(!value) return value;
                            return vue.dayOfWeeks.find(h=>h.value==value).name
                          }
                 },
-                { name: 'dn', title: '線路' ,width: '5%' },
-                { name: 'holidayType', title: '假期類別',width: '20%',formatter(value){
-                        return vue.holidayServiceTypes.find(h=>h.value==value).name
+                { name: 'dn', title: '線路' ,width: '5%' },{ name: 'notes', title: '備註' ,width: '15%' },
+                { name: 'holidayType', title: '假期類別',width: '10%',formatter(value){
+                        return `${value}_${vue.holidayServiceTypes.find(h=>h.value==value).name}`
                         }
                 },
                 { name: 'actions', title: 'Actions' }],
@@ -212,6 +218,8 @@
                     this.dnRoutine.endTime = rowData.endTime;
                     this.dnRoutine.dn = rowData.dn ==null ? "" : rowData.dn;
                     this.dnRoutine.dayOfWeek = rowData.dayOfWeek ==null ? "" : rowData.dayOfWeek;
+                    this.dnRoutine.notes = rowData.notes;
+
                     if(rowData.dayOfWeek ==null){
                       this.getHolidayTypes('type');
                     }else{
@@ -220,12 +228,14 @@
                     this.dnRoutine.holidayType = rowData.holidayType;
                 },
                 deleteRow(rowData) {
-                    this.method = "delete"
-                    this.dnRoutine.id = rowData.id;
-                    this.dnRoutine.startDate = rowData.startDate;
-                    this.dnRoutine.endDate = rowData.endDate;
-                    this.dnRoutine.dayOfWeek = rowData.dayOfWeek;
-                    this.save()
+                    if(confirm("是否刪除")){
+                        this.method = "delete"
+                        this.dnRoutine.id = rowData.id;
+                        this.dnRoutine.startDate = rowData.startDate;
+                        this.dnRoutine.endDate = rowData.endDate;
+                        this.dnRoutine.dayOfWeek = rowData.dayOfWeek;
+                        this.save()
+                    }
                 },
                 save() {
                     let _dnRoutine = this.dnRoutine;
@@ -247,7 +257,6 @@
 
                     if(!_dnRoutine.dayOfWeek) {
                         _dnRoutine.dayOfWeek=null
-                        _dnRoutine.dn =null
                     }
 
                     const config = {

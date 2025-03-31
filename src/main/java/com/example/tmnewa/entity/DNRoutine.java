@@ -46,6 +46,12 @@ public class DNRoutine {
     @Column(name = "holiday_type")
     private Integer holidayType;
 
+    @Comment("備註")
+    @Column(name = "notes",length = 1024)
+    @Nationalized
+    private String notes;
+
+
     @Column(updatable = false)
     private Long creator;
     @Column(updatable = false)
