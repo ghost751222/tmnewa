@@ -18,4 +18,5 @@ public class RequestQueryVo {
     private String dn;
     private String dayOfWeek;
     private Integer holidayType;
+    private String productName;
 }

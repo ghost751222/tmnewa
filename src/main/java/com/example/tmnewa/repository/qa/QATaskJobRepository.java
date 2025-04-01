@@ -13,7 +13,9 @@ import org.springframework.stereotype.Repository;
 public interface QATaskJobRepository extends JpaRepository<QaTaskJob, String> {
 
 
-    @Query(value = "select * from qa_task_job where date(call_start_time) >= :#{#requestQueryVo.startDate} and date(call_stop_time) <=:#{#requestQueryVo.endDate}", nativeQuery = true)
+    @Query(value = "select * from qa_task_job " +
+            "where date(call_start_time) >= :#{#requestQueryVo.startDate} and date(call_stop_time) <=:#{#requestQueryVo.endDate} " +
+            " and  (:#{#requestQueryVo.productName} is null or product_name = :#{#requestQueryVo.productName})", nativeQuery = true)
     Page<QaTaskJob> findByQueryParameter(@Param("requestQueryVo") RequestQueryVo requestQueryVo, Pageable pageable);
 
 }

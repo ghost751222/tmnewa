@@ -25,6 +25,9 @@ public class QADesignTemplateService extends LoginService {
     QADesignTemplateRepository qaDesignTemplateRepository;
 
     @Autowired
+    QADesignItemService qaDesignItemService;
+
+    @Autowired
     QADesignItemRepository qaDesignItemRepository;
 
     public Page<QADesignTemplate> findByQueryParameter(RequestQueryVo requestQueryVo, PageRequest pageRequest) {
@@ -41,13 +44,14 @@ public class QADesignTemplateService extends LoginService {
         qaDesignItemRepository.deleteByQaTemplateId(qaDesignTemplate.getId());
         return qaDesignTemplate;
     }
+
     @Transactional
     public QADesignTemplate updateQADesignTemplate(QADesignTemplate qaDesignTemplate) throws JsonProcessingException {
         qaDesignTemplate.setUpdater(getLoginId());
         qaDesignTemplate.setUpdatedAt(LocalDateTime.now());
 
-        List<QADesignItem> qaDesignItems= qaDesignItemRepository.findByQaTemplateIdAndParentIdOrderBySeqAsc(qaDesignTemplate.getId(),null);
-        for(QADesignItem qaDesignItem :qaDesignItems){
+        List<QADesignItem> qaDesignItems = qaDesignItemRepository.findByQaTemplateIdAndParentIdOrderBySeqAsc(qaDesignTemplate.getId(), null);
+        for (QADesignItem qaDesignItem : qaDesignItems) {
             qaDesignItem.setName(qaDesignTemplate.getName());
         }
         qaDesignItemRepository.saveAll(qaDesignItems);
@@ -75,5 +79,32 @@ public class QADesignTemplateService extends LoginService {
         qaDesignItem.setUpdatedAt(now);
         qaDesignItemRepository.save(qaDesignItem);
         return qaDesignTemplate;
+    }
+
+    @Transactional
+    public QADesignTemplate copyQADesignTemplate(QADesignTemplate qaDesignTemplate) throws JsonProcessingException {
+        var qaDesignItems = qaDesignItemService.findAllChildrenByTemplateIDAndPid(qaDesignTemplate.getId(), null);
+        qaDesignTemplate.setId(null);
+        qaDesignTemplate = addQADesignTemplate(qaDesignTemplate);
+        copyQADesignItem(qaDesignTemplate, qaDesignItemService.findAllChildrenByTemplateIDAndPid(qaDesignTemplate.getId(),null).get(0), qaDesignItems.get(0).getChildren());
+        return qaDesignTemplate;
+    }
+
+    @Transactional
+    private void copyQADesignItem(QADesignTemplate qaDesignTemplate, QADesignItem parent, List<QADesignItem> children) throws JsonProcessingException {
+        for (QADesignItem _qaDesignItem : children) {
+
+            var qaDesignItem = new QADesignItem();
+            qaDesignItem.setQaTemplateId(qaDesignTemplate.getId());
+            qaDesignItem.setParentId(parent.getId());
+            qaDesignItem.setName(_qaDesignItem.getName());
+            qaDesignItem.setScore(_qaDesignItem.getScore());
+            qaDesignItem.setSeq(_qaDesignItem.getSeq());
+            qaDesignItem = qaDesignItemService.addQADesignItem(qaDesignItem);
+            if (_qaDesignItem.getChildren().size() > 0) {
+                copyQADesignItem(qaDesignTemplate, qaDesignItem, _qaDesignItem.getChildren());
+            }
+
+        }
     }
 }

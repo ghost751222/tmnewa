@@ -1,6 +1,7 @@
 package com.example.tmnewa.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.Comment;
@@ -25,11 +26,14 @@ public class DNRoutine {
     @Column(name = "start_date")
     private LocalDate startDate;
 
+    @JsonFormat(pattern = "HH:mm")
     @Column(name = "start_time",nullable = false)
     private LocalTime startTime;
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @JsonFormat(pattern = "HH:mm")
     @Column(name = "end_time",nullable = false)
     private LocalTime endTime;
 

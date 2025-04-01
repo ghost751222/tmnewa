@@ -1,12 +1,16 @@
 package com.example.tmnewa.component;
 
+import com.example.tmnewa.config.TWNEWAConfigProperties;
+import com.example.tmnewa.entity.DNProduct;
 import com.example.tmnewa.repository.UserInfoRepository;
 import com.example.tmnewa.entity.RoleInfo;
 import com.example.tmnewa.entity.UserInfo;
+import com.example.tmnewa.service.DNProductService;
 import com.example.tmnewa.service.RoleInfoService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +29,12 @@ public class DataComponent {
     RoleInfoService roleInfoService;
 
     @Autowired
+    DNProductService dnProductService;
+    @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    TWNEWAConfigProperties twnewaConfigProperties;
 
     @PostConstruct
     public void AddAdminUser() {
@@ -83,4 +92,17 @@ public class DataComponent {
     }
 
 
+    @PostConstruct
+    public void addDNProduct() {
+
+        var dnProducts =  twnewaConfigProperties.getDnProducts();
+
+        for (String product : dnProducts){
+            if(dnProductService.findByProductName(product).isEmpty()){
+                var dnProduct = new DNProduct();
+                dnProduct.setProductName(product);
+                dnProductService.save(dnProduct);
+            }
+        }
+    }
 }

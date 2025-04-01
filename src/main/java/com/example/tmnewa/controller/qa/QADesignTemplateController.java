@@ -84,4 +84,14 @@ public class QADesignTemplateController {
         responseVo.setData(qaDesignTemplateService.deleteQADesignTemplate(qaDesignTemplate));
         return responseVo;
     }
+
+
+    @RequestMapping(value = {"/copy"}, method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseVo<QADesignTemplate> copyQADesignTemplate(@RequestBody QADesignTemplate qaDesignTemplate) throws JsonProcessingException {
+        ResponseVo<QADesignTemplate> responseVo = new ResponseVo<>();
+        responseVo.setMessage("複製成功");
+        responseVo.setData(qaDesignTemplateService.copyQADesignTemplate(qaDesignTemplate));
+        return responseVo;
+    }
 }

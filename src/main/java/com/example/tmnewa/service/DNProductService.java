@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -18,5 +19,13 @@ public class DNProductService extends LoginService {
 
     public List<DNProduct> findAll() {
         return dnProductRepository.findAll();
+    }
+
+    public DNProduct save(DNProduct dnProduct){
+        return  dnProductRepository.save(dnProduct);
+    }
+
+    public Optional<DNProduct> findByProductName(String productName){
+        return  dnProductRepository.findByProductName(productName);
     }
 }

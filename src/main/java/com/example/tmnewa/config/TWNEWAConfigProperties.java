@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 
 @Data
 @Configuration
@@ -33,4 +35,7 @@ public class TWNEWAConfigProperties {
     @Value("${tmnewa.smsPassword:ec120823}")
     private String smsPassword;
 
+
+    @Value("${tmnewa.dnProducts:汽車險,機車險,旅平險,住火險,微電車,傷害險,吉時保}")
+    private List<String> dnProducts;
 }

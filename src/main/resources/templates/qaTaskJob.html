@@ -34,6 +34,14 @@
             </div>
 
             <div class="form-row col-6">
+                <label for="endDate">險別</label>
+                <select class="form-control form-control-sm" v-model="productName">
+                    <option value="">不選擇</option>
+                    <option v-for=" p in productNames" :value="p.value">{{p.name}}</option>
+                </select>
+            </div>
+
+            <div class="form-row col-6">
                 <button type="submit" class="btn btn-primary mb-2">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     {{queryValue}}
@@ -76,6 +84,8 @@
                 jobId: null,
                 action: null,
                 showModal: false,
+                productName:"",
+                productNames:[],
                 fields: [
                          //{ name: 'call_id', title: 'ID' },
                          { name: 'call_start_time', title: '開始時間' }, { name: 'call_stop_time', title: '結束時間' },
@@ -113,6 +123,7 @@
                 this.appendParams = {}
                 if (this.startDate) this.appendParams["startDate"] = this.startDate;
                 if (this.endDate) this.appendParams["endDate"] = this.endDate;
+                if (this.productName) this.appendParams["productName"] = this.productName;
                 this.$nextTick(function () {
                     this.$refs.vuetable.refresh()
                 });
@@ -122,9 +133,13 @@
                 const params = new URLSearchParams();
                 localStorage.setItem("jobId", rowData.id);
                 localStorage.setItem("templateId", templateId);
-<!--                params.append("jobId", rowData.id);-->
-<!--                params.append("templateId", templateId);-->
                 location.href = `qaInspection?` + params.toString();
+            },
+            getProducts(){
+                 let url = [[@{/dnProduct}]]
+                 axios.get(url).then(res=>{
+                    this.productNames = res.data.map(d=>({value:d.productName,name:d.productName}))
+                 })
             }
         },
             mounted: function () {
@@ -134,9 +149,10 @@
                 this.startDate = moment(d).format('YYYY-MM-DD')
                 this.startDate = "2022-04-19"
                 this.endDate = "2022-04-19"
-
+                this.getProducts();
                 this.url = this.baseUrl + "/data"
                 this.query();
+
             }, updated(){
         }
         })
