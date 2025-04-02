@@ -43,6 +43,17 @@ public class QaTaskJob {
     @Comment("專員分機")
     private String call_ext_no;
 
+
+    @Comment("質檢員ID")
+    @Column(name = "qa_id")
+    private Long qaId;
+
+
+    @Comment("質檢員名稱")
+    @Column(name = "qa_name")
+    private String qaName;
+
+
     @Comment("質檢時間")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "qa_time")

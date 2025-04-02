@@ -33,11 +33,14 @@
     <script th:src="@{/js/lib/sockjs.min.js}"></script>
     <script th:src="@{/js/lib/stomp.js}"></script>
     <script th:src="@{/js/lib/moment-with-locales.min.js}"></script>
-    <script type="text/javascript">
-        const csrfName = "[[${_csrf.headerName}]]"
-        const csrfToken = "[[${_csrf.token}]]"
-        const contextPath = "[[@{/}]]";
-        const principalRoles=  Array.from(["[[${session.SPRING_SECURITY_CONTEXT.authentication.getAuthorities()}]]".replace("[","").replace("]","")])
+    <script type="text/javascript"  th:inline="javascript">
+        const csrfName = [[${_csrf.headerName}]]
+        const csrfToken = [[${_csrf.token}]]
+        const contextPath = [[@{/}]];
+        const authorities  = /*[[${session.SPRING_SECURITY_CONTEXT.authentication.getAuthorities()}]]*/;
+        const principalRoles= authorities.map(function(authority) {
+            return authority.authority;
+        });
 
         axios.defaults.headers.common[csrfName] = csrfToken;
 
@@ -121,7 +124,7 @@
                 }
             },
             isUser(){
-                if(this.principalRoles.includes("ROLE_USER")){
+                if(this.principalRoles.includes("ROLE_QA")){
                     return true;
                 }else{
                     return false;

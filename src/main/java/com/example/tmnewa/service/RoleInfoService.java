@@ -39,11 +39,14 @@ public class RoleInfoService {
 
     public boolean isSuperUser(String roleCode) {
         boolean _isSuperUser = false;
-        RoleInfo roleInfo = this.findByRoleCode(roleCode);
-        if (roleInfo != null && roleInfo.getRoleCode().equals(DataComponent.RoleAdminCode)) {
-            _isSuperUser = true;
-        }
+        if (DataComponent.RoleAdminCode.equals(roleCode)) _isSuperUser = true;
         return _isSuperUser;
+    }
+
+    public boolean isQaUser(String roleCode) {
+        boolean _isQaUser = false;
+        if (roleCode.equals("2")) _isQaUser = true;
+        return _isQaUser;
     }
 
 }

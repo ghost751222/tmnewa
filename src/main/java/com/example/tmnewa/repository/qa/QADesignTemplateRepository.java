@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.example.tmnewa.vo.RequestQueryVo;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,5 +19,6 @@ public interface QADesignTemplateRepository extends JpaRepository<QADesignTempla
     Page<QADesignTemplate> findByQueryParameter(@Param("requestQueryVo") RequestQueryVo requestQueryVo, Pageable pageable);
 
     Optional<QADesignTemplate> findByProduct(String product);
+    List<QADesignTemplate> findListByProduct(String product);
 
 }

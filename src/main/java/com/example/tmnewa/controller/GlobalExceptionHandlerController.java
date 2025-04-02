@@ -1,10 +1,13 @@
 package com.example.tmnewa.controller;
 
+import com.example.tmnewa.entity.UserInfo;
 import com.example.tmnewa.utils.JacksonUtils;
 import com.example.tmnewa.vo.RequestQueryVo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -30,7 +33,7 @@ public class GlobalExceptionHandlerController implements ResponseBodyAdvice<Obje
 
 
     @ModelAttribute
-    public void addGlobalAttributes(Model model, HttpServletRequest req, @RequestParam Map<String, Object> params) {
+    public void addGlobalAttributes(Model model, HttpServletRequest req, @RequestParam Map<String, Object> params) throws JsonProcessingException {
         // 取得當前認證的使用者
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
@@ -55,7 +58,10 @@ public class GlobalExceptionHandlerController implements ResponseBodyAdvice<Obje
             }
 
             model.addAttribute("pageRequest", pageRequest);
-            model.addAttribute("roles", authentication.getAuthorities());
+            model.addAttribute("authorities", authentication.getAuthorities());
+            if(req.getSession().getAttribute("userInfo") != null){
+                model.addAttribute("userInfo", JacksonUtils.readValue((String) req.getSession().getAttribute("userInfo"), UserInfo.class));
+            }
         }
 
     }

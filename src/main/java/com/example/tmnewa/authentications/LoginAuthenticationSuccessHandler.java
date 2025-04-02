@@ -57,7 +57,7 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
                 userInfo.setCreatedAt(LocalDateTime.now());
                 userInfo.setUpdatedAt(LocalDateTime.now());
                 userInfo.setRoleInfos(new ArrayList<>());
-                var roleInfo = roleInfoService.findByRoleCode("2");
+                var roleInfo = roleInfoService.findByRoleCode("3");
                 userInfo.getRoleInfos().add(roleInfo);
                 userInfo = userInfoService.save(userInfo);
 
@@ -69,12 +69,12 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
             for (RoleInfo roleInfo : userInfo.getRoleInfos()) {
                 authorities.add(new SimpleGrantedAuthority(roleInfo.getRoleName()));
-                if (roleInfoService.isSuperUser(roleInfo.getRoleCode())) {
-                    isSuperUser = true;
-                }
+//                if (roleInfoService.isSuperUser(roleInfo.getRoleCode())) {
+//                    isSuperUser = true;
+//                }
             }
 
-            request.getSession().setAttribute("isAdmin", isSuperUser);
+            //request.getSession().setAttribute("isAdmin", isSuperUser);
             request.getSession().setAttribute("name", name);
             request.getSession().setAttribute("userInfo", JacksonUtils.writeValueAsString(userInfo));
             request.getSession().setAttribute("loginType","oauth2Login");

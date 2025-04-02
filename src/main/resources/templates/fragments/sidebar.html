@@ -8,8 +8,9 @@
         <div class="sidebar-brand-text mx-3"></div>
     </a>
 
-    <hr class="sidebar-divider"  th:if="${session.isAdmin}">
-    <li class="nav-item" th:if="${session.isAdmin}">
+
+    <hr class="sidebar-divider"  sec:authorize="hasRole('ROLE_ADMIN')">
+    <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#sysManager" aria-expanded="true"
            aria-controls="collapseTwo">
             <i class="fas fa-fw fa-folder"></i>
@@ -33,7 +34,7 @@
     </li>
 
     <hr class="sidebar-divider">
-    <li class="nav-item">
+    <li class="nav-item" >
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#FirstLine" aria-expanded="true"
            aria-controls="collapseTwo">
             <i class="fas fa-fw fa-folder"></i>
@@ -52,7 +53,7 @@
 
 
     <hr class="sidebar-divider">
-    <li class="nav-item">
+    <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER') or hasRole('ROLE_QA') ">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#qaManager" aria-expanded="true"
            aria-controls="collapseTwo">
             <i class="fas fa-fw fa-folder"></i>
@@ -62,7 +63,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
 
                 <h6 class="collapse-header"></h6>
-                <a class="collapse-item" th:href="@{/qaDesignTemplate}" id="qaDesignTemplate" th:if="${session.isAdmin}">
+                <a class="collapse-item" th:href="@{/qaDesignTemplate}" id="qaDesignTemplate" sec:authorize="hasRole('ROLE_ADMIN')">
                     <i class="fas fa-stethoscope"></i>
                     <span>質檢模板</span>
                 </a>
@@ -70,13 +71,13 @@
 
                 <h6 class="collapse-header"></h6>
                 <a class="collapse-item" th:href="@{/qaTaskJob}" id="qa">
-                    <i class="fas fa-receipt"></i>
+                    <i class="fa-solid fa-rectangle-list"></i>
                     <span>質檢列表</span>
                 </a>
 
                 <h6 class="collapse-header"></h6>
                 <a class="collapse-item" th:href="@{/qaTaskJob/qaTaskJobSupply}" id="qaTaskJob">
-                    <i class="fas fa-receipt"></i>
+                    <i class="fas fa-info"></i>
                     <span>質檢資料補充</span>
                 </a>
             </div>

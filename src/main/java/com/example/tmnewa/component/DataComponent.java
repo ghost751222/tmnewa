@@ -39,9 +39,9 @@ public class DataComponent {
     @PostConstruct
     public void AddAdminUser() {
 
-        String[] roleCodes = {"0","1","2"};
+        String[] roleCodes = {RoleAdminCode, "1", "2", "3"};
         RoleInfo roleInfo;
-        for(String roleCode :roleCodes){
+        for (String roleCode : roleCodes) {
             roleInfo = roleInfoService.findByRoleCode(roleCode);
             if (roleInfo == null) {
                 roleInfo = new RoleInfo();
@@ -49,7 +49,7 @@ public class DataComponent {
                     case "0" -> {
                         roleInfo.setName("管理者");
                         roleInfo.setRoleName("ROLE_ADMIN");
-                        roleInfo.setRoleCode("0");
+                        roleInfo.setRoleCode(RoleAdminCode);
                     }
                     case "1" -> {
                         roleInfo.setName("主管");
@@ -58,8 +58,13 @@ public class DataComponent {
                     }
                     case "2" -> {
                         roleInfo.setName("質檢員");
-                        roleInfo.setRoleName("ROLE_USER");
+                        roleInfo.setRoleName("ROLE_QA");
                         roleInfo.setRoleCode("2");
+                    }
+                    case "3" -> {
+                        roleInfo.setName("一般使用者");
+                        roleInfo.setRoleName("ROLE_USER");
+                        roleInfo.setRoleCode("3");
                     }
                 }
                 roleInfo.setCreatedAt(LocalDateTime.now());
@@ -95,10 +100,10 @@ public class DataComponent {
     @PostConstruct
     public void addDNProduct() {
 
-        var dnProducts =  twnewaConfigProperties.getDnProducts();
+        var dnProducts = twnewaConfigProperties.getDnProducts();
 
-        for (String product : dnProducts){
-            if(dnProductService.findByProductName(product).isEmpty()){
+        for (String product : dnProducts) {
+            if (dnProductService.findByProductName(product).isEmpty()) {
                 var dnProduct = new DNProduct();
                 dnProduct.setProductName(product);
                 dnProductService.save(dnProduct);

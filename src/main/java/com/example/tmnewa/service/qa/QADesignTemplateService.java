@@ -40,6 +40,10 @@ public class QADesignTemplateService extends LoginService {
         return qaDesignTemplateRepository.findByProduct(product);
     }
 
+    public List<QADesignTemplate> findListByProduct(String product) {
+        return qaDesignTemplateRepository.findListByProduct(product);
+    }
+
     @Transactional
     public QADesignTemplate deleteQADesignTemplate(QADesignTemplate qaDesignTemplate) {
         qaDesignTemplateRepository.delete(qaDesignTemplate);

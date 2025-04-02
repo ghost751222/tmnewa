@@ -77,11 +77,19 @@ public class QADesignTemplateController {
 
     @RequestMapping(value = {"/", ""}, method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseVo<QADesignTemplate> deleteQADesignTemplate(@RequestBody QADesignTemplate qaDesignTemplate) {
-        qaDesignTemplateService.deleteQADesignTemplate(qaDesignTemplate);
+    public ResponseVo<QADesignTemplate> deleteQADesignTemplate(@RequestBody QADesignTemplate qaDesignTemplate) throws Exception {
         ResponseVo<QADesignTemplate> responseVo = new ResponseVo<>();
-        responseVo.setMessage("刪除成功");
-        responseVo.setData(qaDesignTemplateService.deleteQADesignTemplate(qaDesignTemplate));
+        var qaDesignTemplates = qaDesignTemplateService.findListByProduct(Strings.EMPTY);
+        if(qaDesignTemplates.size() == 1 && qaDesignTemplates.get(0).getId().equals(qaDesignTemplate.getId())){
+            responseVo.setStatusCode(500);
+            responseVo.setMessage("險別為最後資料,不可刪除");
+        }else{
+            qaDesignTemplateService.deleteQADesignTemplate(qaDesignTemplate);
+            responseVo.setMessage("刪除成功");
+            responseVo.setData(null);
+        }
+
+
         return responseVo;
     }
 

@@ -100,9 +100,10 @@
                                                                        return value
                                                                     }
                                                             } },
-                         { name: 'product_name', title: '險別' },{ name: 'service_reason', title: '服務原因' },
-                         { name: 'call_agent_id', title: '專員ID' }, { name: 'call_ext_no', title: '分機' }, { name: 'qaTime', title: '質檢時間' },
-                         {name :'status' , title:'質檢狀態',formatter(value){
+                         { name: 'product_name', title: '險別',width:'5%' },{ name: 'service_reason', title: '服務原因' },{ name: 'call_customer_id', title: '電話' },
+                         { name: 'call_agent_id', title: '專員ID',width:'5%' }, { name: 'call_ext_no', title: '分機',width:'5%' },
+                         { name: 'qaId', title: '質檢員ID',width:'4%' },{ name: 'qaName', title: '質檢姓名' },{ name: 'qaTime', title: '質檢時間' },
+                         {name :'status' , title:'質檢狀態',width:'5%',formatter(value){
                                                         let _status = "未質檢";
                                                         if(value =="1") _status = '已質檢'
                                                         return _status;

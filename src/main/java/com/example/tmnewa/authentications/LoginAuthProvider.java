@@ -77,11 +77,11 @@ public class LoginAuthProvider implements AuthenticationProvider {
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
             for (RoleInfo roleInfo : userInfo.getRoleInfos()) {
                 authorities.add(new SimpleGrantedAuthority(roleInfo.getRoleName()));
-                if (roleInfoService.isSuperUser(roleInfo.getRoleCode())) {
-                    isSuperUser = true;
-                }
+//                if (roleInfoService.isSuperUser(roleInfo.getRoleCode())) {
+//                    isSuperUser = true;
+//                }
             }
-            httpSession.setAttribute("isAdmin", isSuperUser);
+            //httpSession.setAttribute("isAdmin", isSuperUser);
             httpSession.setAttribute("name", userInfo.getName());
             httpSession.setAttribute("userInfo", JacksonUtils.writeValueAsString(userInfo));
 
