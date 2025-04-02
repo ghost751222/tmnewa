@@ -8,6 +8,8 @@ import com.example.tmnewa.repository.qa.QADesignTemplateRepository;
 import com.example.tmnewa.service.LoginService;
 import com.example.tmnewa.vo.RequestQueryVo;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import groovy.lang.Tuple2;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -60,7 +62,7 @@ public class QADesignTemplateService extends LoginService {
     }
 
     @Transactional
-    public QADesignTemplate addQADesignTemplate(QADesignTemplate qaDesignTemplate) throws JsonProcessingException {
+    public Tuple2<QADesignTemplate, QADesignItem> addQADesignTemplate(QADesignTemplate qaDesignTemplate) throws JsonProcessingException {
         qaDesignTemplate.setCreator(getLoginId());
         LocalDateTime now = LocalDateTime.now();
         Long createId = getLoginId();
@@ -78,33 +80,19 @@ public class QADesignTemplateService extends LoginService {
         qaDesignItem.setUpdater(createId);
         qaDesignItem.setUpdatedAt(now);
         qaDesignItemRepository.save(qaDesignItem);
-        return qaDesignTemplate;
+        return new Tuple2<>(qaDesignTemplate, qaDesignItem);
     }
 
     @Transactional
     public QADesignTemplate copyQADesignTemplate(QADesignTemplate qaDesignTemplate) throws JsonProcessingException {
         var qaDesignItems = qaDesignItemService.findAllChildrenByTemplateIDAndPid(qaDesignTemplate.getId(), null);
         qaDesignTemplate.setId(null);
-        qaDesignTemplate = addQADesignTemplate(qaDesignTemplate);
-        copyQADesignItem(qaDesignTemplate, qaDesignItemService.findAllChildrenByTemplateIDAndPid(qaDesignTemplate.getId(),null).get(0), qaDesignItems.get(0).getChildren());
+        qaDesignTemplate.setName(String.format("%s-copy", qaDesignTemplate.getName()));
+        qaDesignTemplate.setProduct(Strings.EMPTY);
+        var tuple2 = addQADesignTemplate(qaDesignTemplate);
+        qaDesignItemService.copyQADesignItem(tuple2.getV1(), tuple2.getV2(), qaDesignItems.get(0).getChildren());
         return qaDesignTemplate;
     }
 
-    @Transactional
-    private void copyQADesignItem(QADesignTemplate qaDesignTemplate, QADesignItem parent, List<QADesignItem> children) throws JsonProcessingException {
-        for (QADesignItem _qaDesignItem : children) {
 
-            var qaDesignItem = new QADesignItem();
-            qaDesignItem.setQaTemplateId(qaDesignTemplate.getId());
-            qaDesignItem.setParentId(parent.getId());
-            qaDesignItem.setName(_qaDesignItem.getName());
-            qaDesignItem.setScore(_qaDesignItem.getScore());
-            qaDesignItem.setSeq(_qaDesignItem.getSeq());
-            qaDesignItem = qaDesignItemService.addQADesignItem(qaDesignItem);
-            if (_qaDesignItem.getChildren().size() > 0) {
-                copyQADesignItem(qaDesignTemplate, qaDesignItem, _qaDesignItem.getChildren());
-            }
-
-        }
-    }
 }

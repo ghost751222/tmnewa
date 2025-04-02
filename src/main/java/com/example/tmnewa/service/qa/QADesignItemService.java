@@ -1,6 +1,7 @@
 package com.example.tmnewa.service.qa;
 
 
+import com.example.tmnewa.entity.qa.QADesignTemplate;
 import com.example.tmnewa.repository.qa.QADesignItemRepository;
 import com.example.tmnewa.entity.qa.QADesignItem;
 import com.example.tmnewa.service.LoginService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -64,5 +66,23 @@ public class QADesignItemService extends LoginService {
         qaDesignItem.setUpdater(getLoginId());
         qaDesignItem.setUpdatedAt(LocalDateTime.now());
         return qaDesignItemRepository.save(qaDesignItem);
+    }
+
+    @Transactional
+    public void copyQADesignItem(QADesignTemplate qaDesignTemplate, QADesignItem parent, List<QADesignItem> children) throws JsonProcessingException {
+        for (QADesignItem _qaDesignItem : children) {
+
+            var qaDesignItem = new QADesignItem();
+            qaDesignItem.setQaTemplateId(qaDesignTemplate.getId());
+            qaDesignItem.setParentId(parent.getId());
+            qaDesignItem.setName(_qaDesignItem.getName());
+            qaDesignItem.setScore(_qaDesignItem.getScore());
+            qaDesignItem.setSeq(_qaDesignItem.getSeq());
+            qaDesignItem = addQADesignItem(qaDesignItem);
+            if (!_qaDesignItem.getChildren().isEmpty()) {
+                copyQADesignItem(qaDesignTemplate, qaDesignItem, _qaDesignItem.getChildren());
+            }
+
+        }
     }
 }

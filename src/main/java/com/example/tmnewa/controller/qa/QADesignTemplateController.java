@@ -62,7 +62,7 @@ public class QADesignTemplateController {
     public ResponseVo<QADesignTemplate> addQADesignTemplate(@RequestBody QADesignTemplate qaDesignTemplate) throws JsonProcessingException {
         ResponseVo<QADesignTemplate> responseVo = new ResponseVo<>();
         responseVo.setMessage("新增成功");
-        responseVo.setData(qaDesignTemplateService.addQADesignTemplate(qaDesignTemplate));
+        responseVo.setData(qaDesignTemplateService.addQADesignTemplate(qaDesignTemplate).getV1());
         return responseVo;
     }
 
