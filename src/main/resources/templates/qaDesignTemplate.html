@@ -71,15 +71,13 @@
                     <i class="fas fa-edit">編輯模板</i>
                 </button>
 
-                <button class="btn btn-info btn-sm" @click="copy(props.rowData)" title="open">
+                <button class="btn btn-info btn-sm" @click="openQaDesignItem(props.rowData)" title="open">
+                    <i class="fas fa-edit">修改項目</i>
+                </button>
+
+                <button class="btn btn-success btn-sm" @click="copy(props.rowData)" title="open">
                     <i class="fas fa-copy">複製模板</i>
                 </button>
-
-                <button class="btn btn-primary btn-sm" @click="openQaDesignItem(props.rowData)" title="open">
-                    <i class="fas fa-edit">編輯質檢點</i>
-                </button>
-
-
 
                 <button class="btn btn-danger btn-sm" @click="deleteRow(props.rowData)" title="delete">
                     <i class="fa fa-trash">刪除模板</i>

@@ -58,7 +58,18 @@
         Vue.component("vuetable-pagination-info", Vuetable.VueTablePaginationInfo);
         Vue.prototype.$http = axios;
         Vue.component('modal', {
-            template: '#modal-template'
+            template: '#modal-template',
+            methods:{
+                keydown(event){
+                   if(event.key == "Escape") this.$emit('close')
+                }
+            },
+            mounted:function(){
+                document.addEventListener("keydown", this.keydown);
+            },
+            destroyed:function(){
+              document.removeEventListener("keydown", this.keydown);
+            }
         })
 
         Vue.mixin({

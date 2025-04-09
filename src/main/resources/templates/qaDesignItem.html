@@ -82,15 +82,15 @@
 
         <div class="w-50">
             <button class="btn btn-primary" @click="add">
-                <i class="fa-solid fa-folder-plus"></i> 新增評估項目
+                <i class="fa-solid fa-folder-plus">新增</i>
             </button>
 
             <button class="btn btn-primary" @click="editRow(itemSelected)">
-                <i class="fa-solid fa-edit"></i> 編輯評估項目
+                <i class="fa-solid fa-edit">編輯</i>
             </button>
 
             <button class="btn btn-secondary" @click="previousPage">
-                <i class="fa fa-undo"></i> 返回
+                <i class="fa fa-undo">返回</i>
             </button>
         </div>
 
@@ -110,11 +110,11 @@
             <div slot="actions" slot-scope="props">
 
                 <button class="btn btn-primary btn-sm" @click="editRow(props.rowData)" title="edit">
-                    <i class="fas fa-edit">編輯評分項目</i>
+                    <i class="fas fa-edit">編輯</i>
                 </button>
 
                 <button class="btn btn-danger btn-sm" @click="deleteRow(props.rowData)" title="delete">
-                    <i class="fa fa-trash">刪除評分項目</i>
+                    <i class="fa fa-trash">刪除</i>
                 </button>
             </div>
         </vuetable>
@@ -168,7 +168,6 @@
             methods: {
                 toggle: function (e) {
                     var target = e.target
-                    console.log(target.tagName)
                     if(target.tagName == "I"){
                          if (this.isFolder) this.isOpen = !this.isOpen;
                     }else{
@@ -199,9 +198,9 @@
                 treeData: {},
                 action: null,
                 showModal: false,
-                fields: [{ name: 'id', title: 'ID' }, { name: 'name', title: '名稱' },
-                         { name: 'score', title :'配分'},
-                         { name: 'seq', title: '順序' }, { "name": "actions", "title": "Actions" }],
+                fields: [{ name: 'id', title: 'ID',width:'10%' }, { name: 'name', title: '名稱',width:'30%' },
+                         { name: 'score', title :'配分',width:'10%'},
+                         { name: 'seq', title: '順序',width:'10%' }, { "name": "actions", "title": "Actions" }],
                 url: [[@{/qaDesignItem/data}]],
                 sortOrder: [{ field: "Id", direction: "asc" }],
                 treeMaxDepth: 0,  // 新增 maxDepth 來記錄最大深度
@@ -258,7 +257,6 @@
                     this.query()
                 },
                 editRow(rowData) {
-                    console.log(rowData)
                     if(rowData == null){
                         return
                     }
